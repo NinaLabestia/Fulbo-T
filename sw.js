@@ -1,4 +1,4 @@
-const CACHE = 'fulbo-trivial-v2';
+const CACHE = 'fulbo-trivial-v3';
 const CORE = ['./', './index.html', './manifest.json', './icons/icon-192.png', './icons/icon-512.png'];
 
 self.addEventListener('install', e => {
