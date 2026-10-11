@@ -101,7 +101,14 @@ blockquote{margin:0;font-family:var(--display);font-size:clamp(22px,6vw,30px);li
 .row span{color:var(--muted)}
 .actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 .up-banner{background:var(--sun);color:var(--ink);font-family:var(--display);font-size:22px;letter-spacing:.04em;border-radius:8px;padding:8px;text-transform:uppercase}
-.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.tabbar{display:flex;align-items:center;gap:8px;min-width:0;max-width:100%}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;flex:1;min-width:0;scrollbar-width:none;-ms-overflow-style:none}
+.tabs::-webkit-scrollbar{display:none}
+.tarrow{flex:none;width:38px;height:38px;border-radius:50%;border:2px solid var(--sun);background:var(--bg2);color:var(--sun);font-size:26px;line-height:1;font-weight:700;display:grid;place-items:center;padding:0 0 3px}
+.tarrow:disabled{opacity:.28;border-color:var(--line);color:var(--muted);cursor:default}
+.tarrow.nudge:not(:disabled){animation:tnudge 1.1s ease-in-out infinite}
+@keyframes tnudge{0%{box-shadow:0 0 0 0 rgba(255,200,61,.7)}100%{box-shadow:0 0 0 10px rgba(255,200,61,0)}}
+@media (prefers-reduced-motion:reduce){.tarrow.nudge:not(:disabled){animation:none}}
 .tab{flex:none;background:var(--bg2);border:2px solid var(--line);border-radius:999px;padding:5px 14px;font-family:var(--label);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:14px;color:var(--muted)}
 .tab[aria-selected="true"]{background:var(--celeste);color:var(--ink);border-color:var(--celeste)}
 .items{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
@@ -147,6 +154,11 @@ blockquote{margin:0;font-family:var(--display);font-size:clamp(22px,6vw,30px);li
 @media (prefers-reduced-motion:reduce){.claim{animation:none;box-shadow:0 3px 0 #b88a10,0 0 14px 4px rgba(255,200,61,.8)}}
 .passbig{width:100%;position:relative;font-size:22px;padding:12px 16px;letter-spacing:.1em}
 .passbig .dot{top:-8px;right:-4px}
+.dgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.dgrid div{background:var(--bg);border:2px solid var(--line);border-radius:8px;padding:6px 0;font-family:var(--label);font-weight:700;font-size:12px;color:var(--muted);line-height:1.2}
+.dgrid div b{display:block;font-family:var(--display);font-weight:400;font-size:16px;color:var(--fg)}
+.dgrid div.hoy{border-color:var(--sun);background:rgba(255,200,61,.14);color:var(--sun)}
+.dgrid div.hecho{opacity:.55}
 .item .note{color:var(--muted);font-size:12px;line-height:1.2}
 /* ---------- intro ---------- */
 #intro{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:radial-gradient(circle at 50% 40%,#1f5390 0,#0d2540 52%,#050f1c 100%);overflow:hidden;transition:opacity .55s,visibility .55s;touch-action:manipulation}
@@ -268,7 +280,7 @@ html{background:#0d2540}
 
   <section id="shop" class="screen" hidden>
     <div class="bar-top"><button class="ghost" data-go="home">Volver</button><h2 class="sec">Tienda</h2></div>
-    <div class="tabs" id="tabs" role="tablist"></div>
+    <div class="tabbar"><button class="tarrow" id="tprev" type="button" aria-label="Ver categorías anteriores">&#8249;</button><div class="tabs" id="tabs" role="tablist"></div><button class="tarrow nudge" id="tnext" type="button" aria-label="Ver más categorías">&#8250;</button></div>
     <div class="items" id="items"></div>
   </section>
 </div>
@@ -281,6 +293,15 @@ html{background:#0d2540}
     <div class="wshirt">En tu camiseta<b id="wprev">—</b></div>
     <div class="wact"><button class="btn gold" id="wgo" type="submit" disabled>¡A jugar!</button><button class="btn alt" id="wcancel" type="button" hidden>Cancelar</button></div>
   </form>
+</div>
+
+<div class="welcome" id="daily" hidden>
+  <div class="wbox">
+    <h2>Premio diario</h2>
+    <p id="dtext"></p>
+    <div class="dgrid" id="dgrid"></div>
+    <div class="wact"><button class="btn gold" id="dgo" type="button">Reclamar</button></div>
+  </div>
 </div>
 
 <script>
@@ -386,12 +407,14 @@ const REFS=[
 ];
 const NAME_PRICE=100,NAME_FREE=2;
 const CATS={kit:KITS,ball:BALLS,stadium:STADS,fest:FESTS,trail:TRAILS,num:NUMS,cut:CUTS,hc:HCOLS};
+/* economía: lo que vale más de 100 monedas cuesta el doble; las primeras compras (100) siguen baratas. Los números de camiseta quedan como se pidieron. */
+[KITS,BALLS,STADS,FESTS,TRAILS,CUTS,HCOLS].forEach(a=>a.forEach(i=>{if(i.price>100)i.price*=2}));
 const UPS=[
  {id:'prec',name:'Puntería',desc:'La mira se mueve más lento y es más fácil clavarla.'},
  {id:'pow',name:'Potencia',desc:'Tiros más fuertes: el arquero llega menos.'},
  {id:'curve',name:'Efecto',desc:'Más curva en los tiros libres para esquivar la barrera.'}
 ];
-const UP_COST=[80,140,220,320,450];
+const UP_COST=[160,280,440,640,900];
 const byId=(cat,id)=>CATS[cat].find(i=>i.id===id)||CATS[cat][0];
 
 /* ---------- datos de las preguntas ---------- */
@@ -433,15 +456,15 @@ const NAME_POOL=PLAYERS.map(p=>p.n).concat(EXTRA_NAMES);
 
 /* ---------- estado guardado ---------- */
 const KEY='potrero-pro-v1';
-const defaults=()=>({coins:40,xp:0,owned:{kit:['celeste'],ball:['clasica'],stadium:['potrero'],fest:['confeti'],trail:['ninguna'],num:['0'],cut:['clasico'],hc:['negro']},eq:{kit:'celeste',ball:'clasica',stadium:'potrero',fest:'confeti',trail:'ninguna',num:'0',cut:'clasico',hc:'negro'},up:{prec:0,pow:0,curve:0},best:{pen:0,fk:0,clubs:0,stats:0,quotes:0},goals:0,mute:false,name:'',nameFree:NAME_FREE,nameTokens:0,pass:{claimed:[],ref:false,refOwned:[],refEq:'amarillo'}});
+const defaults=()=>({coins:40,xp:0,owned:{kit:['celeste'],ball:['clasica'],stadium:['potrero'],fest:['confeti'],trail:['ninguna'],num:['0'],cut:['clasico'],hc:['negro']},eq:{kit:'celeste',ball:'clasica',stadium:'potrero',fest:'confeti',trail:'ninguna',num:'0',cut:'clasico',hc:'negro'},up:{prec:0,pow:0,curve:0},best:{pen:0,fk:0,clubs:0,stats:0,quotes:0},goals:0,mute:false,name:'',nameFree:NAME_FREE,nameTokens:0,pass:{claimed:[],ref:false,refOwned:[],refEq:'amarillo'},daily:{last:'',streak:0}});
 function merge(a,b){for(const k in b){if(b[k]&&typeof b[k]==='object'&&!Array.isArray(b[k])&&a[k]&&typeof a[k]==='object')merge(a[k],b[k]);else a[k]=b[k]}return a}
 function load(){try{const r=localStorage.getItem(KEY);if(r)return merge(defaults(),JSON.parse(r))}catch(e){}return defaults()}
 let S=load();
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
-const lvl=()=>1+Math.floor(Math.sqrt(S.xp/60));
-function give(points,coins){const b=lvl();S.xp+=Math.round(points/2);S.coins+=coins;const a=lvl();let bonus=0;if(a>b){bonus=40*(a-b);S.coins+=bonus}save();refreshTop();return{up:a>b,level:a,bonus}}
+const lvl=()=>1+Math.floor(Math.sqrt(S.xp/10));
+function give(points,coins){const b=lvl();S.xp+=Math.round(points/2);S.coins+=coins;const a=lvl();let bonus=0;if(a>b){bonus=20*(a-b);S.coins+=bonus}save();refreshTop();return{up:a>b,level:a,bonus}}
 function refreshTop(){
-  const L=lvl(),lo=60*(L-1)**2,hi=60*L*L;
+  const L=lvl(),lo=10*(L-1)**2,hi=10*L*L;
   $('#coins').textContent=S.coins;$('#lv').textContent=L;
   $('#xp').style.width=Math.round((S.xp-lo)/(hi-lo)*100)+'%';
   $('#xpt').textContent=(S.xp-lo)+' / '+(hi-lo);
@@ -1630,7 +1653,7 @@ $('#wform').addEventListener('submit',e=>{
     if(S.nameFree>0)S.nameFree--;else if(S.nameTokens>0)S.nameTokens--;
     S.name=v;save();renderHome();toast('Nombre cambiado: '+v);return;
   }
-  S.name=v;save();renderHome();toast('¡Bienvenido, '+v+'!');
+  S.name=v;save();renderHome();toast('¡Bienvenido, '+v+'!');setTimeout(checkDaily,1200);
 });
 $('#wcancel').onclick=()=>{wDone=null;$('#welcome').hidden=true};
 $('#chName').onclick=()=>{
@@ -1733,7 +1756,7 @@ function finishShot(){
   if(G.kz&&G.kp>0)G.fall=.001;
   if(o==='goal'){
     G.goals++;G.streak++;S.goals++;
-    pts=100+(G.ang?50:0)+(fk?50:0)+Math.min(G.streak-1,5)*10;co=50;
+    pts=100+(G.ang?50:0)+(fk?50:0)+Math.min(G.streak-1,5)*10;co=25;
     msg=G.ang?'¡Al ángulo!':'¡Gol!';cls=G.ang?'gold':'good';fest(G.parts,S.eq.fest);G.cheer=2.4;sGoal(G.ang);
   }else{
     G.streak=0;if(o==='save'||o==='miss'||o==='wall')crowdGroan();sMiss();cls='bad';
@@ -2011,7 +2034,7 @@ function answer(i){
   let head,extra='';
   if(right){
     T.streak++;T.ok++;
-    const pts=Math.max(30,120-cost*q.hints)+10*Math.min(T.streak-1,5),co=50;
+    const pts=Math.max(30,120-cost*q.hints)+10*Math.min(T.streak-1,5),co=25;
     T.score+=pts;T.coins+=co;q.res='ok';sOk();
     head='¡Correcto! +'+pts+' pts · +'+co+' monedas';
   }else{T.streak=0;q.res='no';sMiss();head='Era '+q.a}
@@ -2054,8 +2077,22 @@ let shopTab='kit';
 const TABS=[['kit','Camiseta'],['num','Número'],['cut','Corte'],['hc','Color de pelo'],['ball','Pelota'],['stadium','Estadio'],['fest','Festejo'],['trail','Estela'],['ref','Árbitro'],['extra','Extras'],['up','Mejoras']];
 function renderShop(tab){
   shopTab=tab;
-  const t=$('#tabs');t.innerHTML='';
+  const t=$('#tabs'),keep=t.scrollLeft;t.innerHTML='';
   TABS.forEach(([id,name])=>{const b=document.createElement('button');b.className='tab';b.textContent=name;b.setAttribute('role','tab');b.setAttribute('aria-selected',String(id===tab));b.onclick=()=>renderShop(id);t.appendChild(b)});
+  /* flechas para mover las categorías sin tener que deslizar */
+  if(!t._flechas){
+    t._flechas=true;
+    const stop=()=>{$('#tnext').classList.remove('nudge')};
+    const mover=d=>{stop();t.scrollBy({left:d*Math.max(120,t.clientWidth*.7),behavior:'smooth'})};
+    $('#tprev').onclick=()=>mover(-1);$('#tnext').onclick=()=>mover(1);
+    t.addEventListener('scroll',()=>{if(t.scrollLeft>8)stop();flechas()},{passive:true});
+    window.addEventListener('resize',flechas);
+  }
+  function flechas(){const max=t.scrollWidth-t.clientWidth;$('#tprev').disabled=t.scrollLeft<=2;$('#tnext').disabled=t.scrollLeft>=max-2}
+  t.scrollLeft=keep;
+  const sel=t.querySelector('[aria-selected="true"]');
+  if(sel){const l=sel.offsetLeft-t.offsetLeft,rgt=l+sel.offsetWidth;if(l<t.scrollLeft)t.scrollLeft=l-8;else if(rgt>t.scrollLeft+t.clientWidth)t.scrollLeft=rgt-t.clientWidth+8}
+  flechas();
   const box=$('#items');box.innerHTML='';
   if(tab==='extra'){
     const d=document.createElement('div');d.className='item up';
@@ -2199,7 +2236,20 @@ function claimReward(rw){
 
 /* ---------- arranque ---------- */
 refreshTop();show('home');
+const DAILY=[50,75,100,125,150,175,200];
+const dayStr=n=>new Date(Date.now()+n*864e5).toLocaleDateString('en-CA');
+function checkDaily(){
+  if(!S.name||!$('#welcome').hidden||!$('#daily').hidden)return;
+  const today=dayStr(0);if(S.daily.last===today)return;
+  const streak=S.daily.last===dayStr(-1)?(S.daily.streak%7)+1:1;
+  $('#dtext').textContent=streak===1?'¡Entrá todos los días y el premio va creciendo!':'Llevás '+streak+' días seguidos. ¡No cortes la racha!';
+  $('#dgrid').innerHTML=DAILY.map((v,i)=>'<div class="'+(i+1===streak?'hoy':i+1<streak?'hecho':'')+'">Día '+(i+1)+'<b>'+v+'</b></div>').join('');
+  $('#dgo').textContent='Reclamar +'+DAILY[streak-1];
+  $('#dgo').onclick=()=>{S.coins+=DAILY[streak-1];S.daily={last:today,streak};save();refreshTop();$('#daily').hidden=true;sOk();toast('+'+DAILY[streak-1]+' monedas')};
+  $('#daily').hidden=false;
+}
 if(!S.name)openWelcome(false);
+else setTimeout(checkDaily,3700);
 })();
 </script>
 
