@@ -2144,11 +2144,30 @@ function endTrivia(){
 
 /* ---------- LIGA PENALITIS LAN: 2 jugadores online con código de sala (PeerJS / WebRTC) ---------- */
 let NET=null;
+/* Servidores TURN (opcionales). Si dos celulares no logran conectarse directo, acá se agregan, por ejemplo:
+   {urls:'turn:SERVIDOR:80',username:'USUARIO',credential:'CLAVE'} */
+const LAN_ICE=[
+  {urls:"stun:stun.relay.metered.ca:80"},
+  {urls:"turn:global.relay.metered.ca:80",username:"42d863aa1531365eea187df8",credential:"/ErSJ0aWjhTFtq12"},
+  {urls:"turn:global.relay.metered.ca:80?transport=tcp",username:"42d863aa1531365eea187df8",credential:"/ErSJ0aWjhTFtq12"},
+  {urls:"turn:global.relay.metered.ca:443",username:"42d863aa1531365eea187df8",credential:"/ErSJ0aWjhTFtq12"},
+  {urls:"turns:global.relay.metered.ca:443?transport=tcp",username:"42d863aa1531365eea187df8",credential:"/ErSJ0aWjhTFtq12"}
+];
+/* Metered (Open Relay): pegá acá tu dirección, con el formato https://TUAPP.metered.live/api/v1/turn/credentials?apiKey=TU_CLAVE */
+const LAN_TURN_URL='';
+let LAN_DYN=null;
+function lanIce(cb){
+  if(!LAN_TURN_URL||LAN_DYN)return cb();
+  let done=false;const end=()=>{if(!done){done=true;cb()}};
+  setTimeout(end,5000);
+  try{fetch(LAN_TURN_URL).then(r=>r.json()).then(j=>{if(Array.isArray(j))LAN_DYN=j;end()}).catch(end)}catch(e){end()}
+}
+function lanOpts(){return{config:{iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'},{urls:'stun:global.stun.twilio.com:3478'}].concat(LAN_ICE,LAN_DYN||[])}}}
 const CODE_CH='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 function lanLoad(ok,bad){
-  if(window.Peer)return ok();
+  if(window.Peer)return lanIce(ok);
   const e=document.createElement('script');e.src='https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js';
-  e.onload=ok;e.onerror=bad;document.head.appendChild(e);
+  e.onload=()=>lanIce(ok);e.onerror=bad;document.head.appendChild(e);
 }
 function lanSend(m){try{if(NET&&NET.conn&&NET.conn.open)NET.conn.send(m)}catch(e){}}
 function lanClose(){
@@ -2163,7 +2182,7 @@ function lanHost(){
   lanLoad(()=>{
     const mk=()=>{
       const code=Array.from({length:4},()=>CODE_CH[Math.floor(Math.random()*CODE_CH.length)]).join('');
-      const p=new Peer('fulbo-'+code);
+      const p=new Peer('fulbo-'+code,lanOpts());
       p.on('open',()=>{NET={peer:p,host:true,code,conn:null,opp:''};lanView('wait')});
       p.on('connection',c=>{if(!NET||NET.conn){c.close();return}NET.conn=c;lanWire(c)});
       p.on('error',e=>{if(e.type==='unavailable-id'){try{p.destroy()}catch(x){}mk()}else lanFail('No se pudo crear la sala. Revisá tu internet.')});
@@ -2173,10 +2192,10 @@ function lanHost(){
 function lanJoin(code){
   lanView('busy','Conectando…');
   lanLoad(()=>{
-    const p=new Peer();
+    const p=new Peer(undefined,lanOpts());
     p.on('open',()=>{
       const c=p.connect('fulbo-'+code,{reliable:true});NET={peer:p,host:false,code,conn:c,opp:''};lanWire(c);
-      setTimeout(()=>{if(NET&&NET.conn===c&&!c.open)lanFail('No se pudo entrar a la sala. Revisá el código.')},12000);
+      setTimeout(()=>{if(NET&&NET.conn===c&&!c.open)lanFail('No se pudo entrar a la sala. Puede que sus conexiones no permitan jugar directo; probá cambiar de Wi-Fi a datos.')},20000);
     });
     p.on('error',e=>lanFail(e.type==='peer-unavailable'?'Esa sala no existe. Revisá el código.':'No se pudo conectar. Revisá tu internet.'));
   },()=>lanFail('No se pudo cargar la conexión online. Revisá tu internet.'));
