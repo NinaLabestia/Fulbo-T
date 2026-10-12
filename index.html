@@ -217,6 +217,15 @@ blockquote{margin:0;font-family:var(--display);font-size:clamp(22px,6vw,30px);li
 #ligaCv{width:100%;height:auto;border-radius:10px;display:block;border:3px solid var(--line)}
 .lancode{font-family:var(--display);font-size:64px;letter-spacing:.2em;text-align:center;color:var(--celeste);padding-left:.2em}
 .lanin{width:100%;font-family:var(--display);font-size:34px;letter-spacing:.3em;text-align:center;text-transform:uppercase;background:var(--bg2);color:var(--fg);border:2px solid var(--line);border-radius:8px;padding:8px}
+.fr{gap:14px}.fr h3{margin:0;font-family:var(--display);font-size:18px;letter-spacing:.04em;text-transform:uppercase}
+.fid{background:var(--bg2);border:2px dashed var(--line);border-radius:10px;padding:10px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.fid b{font-family:var(--display);font-size:26px;letter-spacing:.14em}
+.frow{display:flex;align-items:center;gap:8px;background:var(--bg2);border:2px solid var(--line);border-radius:10px;padding:8px 10px}
+.frow span{flex:1;min-width:0;overflow-wrap:anywhere}.frow small{display:block;color:var(--muted)}
+.frow .btn{padding:6px 10px;font-size:13px}
+.fadd{display:flex;gap:8px}
+.fadd input{flex:1;min-width:0;font-family:var(--display);font-size:22px;letter-spacing:.14em;text-transform:uppercase;background:var(--bg2);color:var(--fg);border:2px solid var(--line);border-radius:8px;padding:8px;text-align:center}
+.fmsg{margin:0;min-height:1.2em;color:var(--muted)}.fmsg.ok{color:var(--good)}.fmsg.bad{color:var(--bad)}
 </style>
 <style>
 html,body{margin:0;min-height:100%;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
@@ -317,6 +326,7 @@ html{background:#0d2540}
       </div>
     </div>
     <div class="quick"><button class="btn gold qb" data-go="pass" id="passBtn">PASE ELITE</button><button class="btn qb" data-go="rank" id="rankBtn">RANKING</button></div>
+    <div class="quick" style="grid-template-columns:1fr"><button class="btn qb" data-go="friends" id="friBtn" type="button" style="position:relative">AMIGOS</button></div>
     <h2 class="sec">Jugar</h2>
     <button class="feat" id="featPen" type="button"></button>
     <div class="modes" id="modesA"></div>
@@ -373,6 +383,11 @@ html{background:#0d2540}
     <div class="bar-top"><button class="ghost" data-go="home">Volver</button><h2 class="sec">Tienda</h2></div>
     <div class="tabbar"><button class="tarrow" id="tprev" type="button" aria-label="Ver categorías anteriores">&#8249;</button><div class="tabs" id="tabs" role="tablist"></div><button class="tarrow nudge" id="tnext" type="button" aria-label="Ver más categorías">&#8250;</button></div>
     <div class="items" id="items"></div>
+  </section>
+
+  <section id="friends" class="screen" hidden>
+    <div class="bar-top"><button class="ghost" data-go="home">Volver</button><h2 class="sec">Amigos</h2></div>
+    <div class="card fr" id="fbox"></div>
   </section>
 
   <section id="rank" class="screen" hidden>
@@ -1766,6 +1781,7 @@ function show(id){
   if(id==='shop')renderShop(shopTab);
   if(id==='pass')renderPass();
   if(id==='rank')renderRank();
+  if(id==='friends')renderFriends();
   $('#nav').hidden=!['home','rank','pass','shop'].includes(id);document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.go===id));
   window.scrollTo(0,0);
 }
@@ -1779,6 +1795,7 @@ const ICON={
  clubs:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3"><path d="M8 8h32v18c0 8-7 12-16 15C15 38 8 34 8 26z"/><path d="M24 15v15M17 22h14"/></svg>',
  stats:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3"><path d="M8 40h32M13 40V26M22 40V12M31 40V20M40 40V30"/></svg>',
  quotes:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 10h36v22H20l-9 8v-8H6z"/><path d="M14 18h20M14 24h12"/></svg>',
+ arq:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3"><path d="M8 40V14h32v26"/><path d="M8 14l4-4h24l4 4"/><circle cx="24" cy="29" r="5"/></svg>',
  lan:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3"><circle cx="16" cy="16" r="5"/><circle cx="32" cy="16" r="5"/><path d="M6 36c0-6 4-10 10-10s10 4 10 10M22 36c0-6 4-10 10-10s10 4 10 10"/></svg>',
  liga:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3"><path d="M14 6h20v12c0 7-4 11-10 11S14 25 14 18z"/><path d="M14 10H7c0 7 3 10 8 11M34 10h7c0 7-3 10-8 11"/><path d="M24 29v8M16 42h16M19 37h10"/></svg>'
 };
@@ -1786,6 +1803,7 @@ const MODES=[
  {id:'pen',group:'A',name:'Penales',desc:'Tanda de 5. Mirá la mira y definí.'},
  {id:'fk',group:'A',name:'Tiros libres',desc:'Barrera al frente: pasala por arriba o por el costado.'},
  {id:'liga',group:'A',name:'Liga penalitis',desc:'Vencé a los 19 clubes: pateás y atajás. ¡Ganá la copa!'},
+ {id:'arq',group:'A',name:'Modo arquero',desc:'Atajá penales en racha. Tenés 3 vidas.'},
  {id:'lan',group:'A',name:'Liga penalitis LAN',desc:'Jugá online con un amigo: creá una sala y pasale el código.'},
  {id:'clubs',group:'B',name:'Por clubes',desc:'Adiviná el crack por los clubes donde jugó.'},
  {id:'stats',group:'B',name:'Por datos',desc:'Récords y hazañas, de menos a más pistas.'},
@@ -1796,8 +1814,8 @@ function renderHome(){
     const box=$('#modesA');box.innerHTML='';
     MODES.filter(m=>m.id!=='pen').forEach(m=>{
       const b=document.createElement('button');b.className='mode';
-      b.innerHTML=ICON[m.id]+'<h3>'+m.name+'</h3><p>'+m.desc+'</p><em>'+(m.id==='lan'?'2 jugadores':(m.id==='liga'?'Copas ':'Récord ')+S.best[m.id])+'</em>';
-      b.onclick=()=>m.id==='lan'?lanOpen():m.id==='liga'?ligaOpen():m.group==='A'?playOrResume(m.id):startTrivia(m.id);
+      b.innerHTML=ICON[m.id]+'<h3>'+m.name+'</h3><p>'+m.desc+'</p><em>'+(m.id==='lan'?'2 jugadores':(m.id==='liga'?'Copas ':'Récord ')+(S.best[m.id]||0))+'</em>';
+      b.onclick=()=>m.id==='arq'?arqStart():m.id==='lan'?lanOpen():m.id==='liga'?ligaOpen():m.group==='A'?playOrResume(m.id):startTrivia(m.id);
       box.appendChild(b);
     });
   }
@@ -1807,6 +1825,7 @@ function renderHome(){
   $('#chName').textContent=S.nameFree>0?'Cambiar nombre ('+S.nameFree+' gratis)':S.nameTokens>0?'Cambiar nombre ('+S.nameTokens+')':'Cambiar nombre';
   const nClaim=PASS.filter(r=>lvl()>=r.lv&&!S.pass.claimed.includes(r.lv)).length;
   $('#passBtn').innerHTML='PASE ELITE'+(nClaim?'<span class="dot">'+nClaim+'</span>':'');
+  try{frBadge()}catch(e){}
   cancelAnimationFrame(homeRaf);homeRaf=requestAnimationFrame(homeAnim);
 }
 function homeAnim(now){
@@ -1850,6 +1869,7 @@ function setHint(){
   $('#hint').textContent=(G.net&&G.phase==='aim'&&G.turn==='riv')?'Esperando que patee '+(NET?NET.opp:'tu rival')+'…':h[G.phase]||'';
 }
 function hud(){
+  {const pk=$('#hKick').parentNode.firstChild,pg=$('#hGoals').parentNode.firstChild;pk.nodeValue=G.arq?'Vidas':'Tiro';pg.nodeValue=G.arq?'Atajadas':'Goles'}
   if(G.mode==='liga')return ligaHud();
   $('#hKick').textContent=Math.min(G.kick,G.total)+'/'+G.total;
   $('#hGoals').textContent=G.goals;$('#hStreak').textContent=G.streak;$('#hScore').textContent=G.score;
@@ -2494,11 +2514,12 @@ function ligaStartMatch(){
   last=performance.now();cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);
 }
 function ligaHud(){
-  $('#hKick').textContent=G.round>3?'MS':G.round+'/3';
+  $('#hKick').textContent=G.arq?'♥'.repeat(Math.max(0,G.arq.lives))||'0':G.round>3?'MS':G.round+'/3';
   $('#hGoals').textContent=G.goals;$('#hStreak').textContent=G.streak;$('#hScore').textContent=G.score;
 }
 function ligaKick(){
   nextKick();
+  if(G.arq){LG.d.n=G.arq.saves>=8?4:3;G.rkit=arqKit();G.rival=G.rkit.id}
   if(G.net){G.res=null;setHint();if(G.turn==='riv'&&NET&&NET.pend){const m=NET.pend;NET.pend=null;netOnShot(m)}return}
   if(G.turn!=='riv')return;
   /* patea el rival: 3 zonas posibles (izquierda, centro, derecha) y una es la verdadera */
@@ -2552,6 +2573,7 @@ function ligaFinish(){
   G.phase='result';G.wait=(o==='save'||o==='post')?1.9:1.5;G.w0=G.wait;hud();setHint();
 }
 function ligaAfter(){
+  if(G.arq)return arqAfter();
   if(G.net)return netAfter();
   if(G.turn==='me'){G.turn='riv';ligaKick();return}
   /* los dos patearon: si ya van 3 rondas y no hay empate, se define */
@@ -2578,6 +2600,7 @@ function ligaEndMatch(){
 /* marcador y zonas para elegir, dibujados encima del partido */
 function ligaOverlay(c){
   const sc=G.sc,n=Math.min(7,Math.max(3,G.round));
+  if(G.arq)arqBoard(c);else{
   c.save();
   rr(c,70,4,260,41,8);c.fillStyle='rgba(8,14,26,.84)';c.fill();c.lineWidth=1.5;c.strokeStyle='rgba(255,255,255,.28)';c.stroke();
   ligaShieldC(c,80,8,20,24,S.eq.kit);ligaShieldC(c,300,8,20,24,G.rival);
@@ -2592,7 +2615,7 @@ function ligaOverlay(c){
       else{c.fillStyle=r?'#4be37a':'#ef5a5f';c.fill()}
     }
   }
-  c.restore();
+  c.restore();}
   if(G.phase==='choose'){
     c.save();c.textAlign='center';
     G.opts.forEach((o,i)=>{
@@ -3066,7 +3089,7 @@ $('#aform').addEventListener('submit',async e=>{
   }catch(x){aMsg('No hay conexión. Probá de nuevo.')}
   finally{go.disabled=false}
 });
-function refreshAcc(){$('#accBtn').textContent=ME?'Mi cuenta':'Ingresar'}
+function refreshAcc(){$('#accBtn').textContent=ME?'Mi cuenta':'Ingresar';try{frT=0;frBadge()}catch(e){}}
 if(sb){
   sb.auth.onAuthStateChange((ev,sess)=>{
     ME=sess&&sess.user?sess.user:null;
@@ -3075,6 +3098,113 @@ if(sb){
     if(ME&&pulledFor!==ME.id){pulledFor=ME.id;setTimeout(cloudPull,0)}
     if(!ME){pulledFor='';lastSig=''}
   });
+}
+
+
+/* ---------- MODO ARQUERO: atajá penales en racha, 3 vidas ---------- */
+function arqKit(){
+  const k=pick(KITS);
+  return Object.assign({},byId('kit',k.id),{skin:pick(SKINS),hair:pick(HAIRS),hs:pick(['clasico','clasico','largo','cubana','rock','pelado']),nm:clubTag(k.id),digits:String(1+Math.floor(Math.random()*11))});
+}
+function arqStart(){
+  LG={money:true,arq:true,online:true,d:{n:3,help:0,prize:0}};show('play');
+  const kit=arqKit();
+  G={mode:'liga',arq:{lives:3,saves:0},goal:GOALS.pen,kick:0,total:9999,score:0,goals:0,streak:0,coins:0,time:0,parts:[],trail:[],ph:rnd(0,6),cheer:0,rt:0,
+     rival:kit.id,sc:{me:0,riv:0},sh:{me:[],riv:[]},turn:'riv',round:1,rkit:kit};
+  $('#msg').className='msg';crowdStart();setTimeout(()=>whistle(false),250);
+  ligaKick();hud();
+  last=performance.now();cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);
+}
+function arqAfter(){
+  const a=G.arq;
+  if(G.outcome==='goal'){a.lives--;G.streak=0}
+  else{a.saves++;G.goals=a.saves;G.streak++;G.score+=40+10*Math.min(G.streak-1,10);G.coins+=5+Math.min(G.streak,10)}
+  hud();
+  if(a.lives<=0){arqEnd();return}
+  ligaKick();
+}
+function arqEnd(){
+  whistle(true);
+  const a=G.arq,saves=a.saves,old=S.best.arq||0,rec=saves>old;
+  if(rec)S.best.arq=saves;
+  const r=give(G.score,G.coins);save();LG=null;
+  R={title:rec?'¡Nuevo récord!':'Se acabaron las vidas',big:saves,unit:'atajadas',
+     rows:[['Récord',Math.max(saves,old)],['Puntos',G.score],['Monedas ganadas',G.coins]],up:r,again:()=>arqStart()};
+  showResult();
+}
+function arqBoard(c){
+  const a=G.arq;c.save();
+  rr(c,105,4,190,41,8);c.fillStyle='rgba(8,14,26,.84)';c.fill();c.lineWidth=1.5;c.strokeStyle='rgba(255,255,255,.28)';c.stroke();
+  c.textAlign='center';c.textBaseline='alphabetic';c.fillStyle='#ffffff';c.font='400 25px Anton,Impact,sans-serif';c.fillText(a.saves,150,31);
+  c.font='700 8px "Barlow Condensed",Arial,sans-serif';c.fillStyle='#9fc9ff';c.fillText('ATAJADAS',150,42);
+  c.font='400 20px Arial,sans-serif';
+  for(let i=0;i<3;i++){c.fillStyle=i<a.lives?'#ef5a5f':'rgba(255,255,255,.18)';c.fillText('\u2665',215+i*24,31)}
+  c.restore();
+}
+
+/* ---------- AMIGOS: ID único por cuenta, solicitudes guardadas en el servidor (Supabase) ---------- */
+var frT=0;
+const frFmt=c=>String(c||'').replace(/^(.{4})(.+)$/,'$1-$2');
+function frBadge(){
+  const b=$('#friBtn');if(!b)return;
+  const old=b.querySelector('.dot');if(old)old.remove();
+  if(!sb||!ME||Date.now()-frT<15000)return;
+  frT=Date.now();
+  sb.rpc('friend_list').then(r=>{
+    if(r.error||!r.data)return;
+    const n=r.data.filter(x=>x.status==='pending'&&x.incoming).length;
+    const o=b.querySelector('.dot');if(o)o.remove();
+    if(n){const d=document.createElement('span');d.className='dot';d.textContent=n;b.appendChild(d)}
+  }).catch(()=>{});
+}
+async function renderFriends(){
+  const box=$('#fbox');frT=0;
+  if(!sb){box.innerHTML='<p class="rnote">No se pudo conectar con el servidor.</p>';return}
+  if(!ME){box.innerHTML='<p class="rnote">Para tener amigos necesitás una cuenta: así tu ID queda guardado aunque cambies de celular.<br><button class="btn" id="frLogin" type="button">Ingresar o crear cuenta</button></p>';$('#frLogin').onclick=()=>openAuth('login',false);return}
+  box.innerHTML='<p class="rnote">Cargando…</p>';
+  try{
+    const [c,l]=await Promise.all([sb.rpc('my_friend_code'),sb.rpc('friend_list')]);
+    if(c.error)throw c.error;if(l.error)throw l.error;
+    if($('#friends').hidden)return;
+    frDraw(c.data,l.data||[]);
+  }catch(e){
+    box.innerHTML='<p class="rnote">No se pudo cargar tu lista de amigos. Probá de nuevo en un rato.<br><button class="btn" id="frRetry" type="button">Reintentar</button></p>';
+    $('#frRetry').onclick=renderFriends;
+  }
+}
+function frDraw(code,list){
+  const box=$('#fbox'),inc=list.filter(x=>x.status==='pending'&&x.incoming),out=list.filter(x=>x.status==='pending'&&!x.incoming),fr=list.filter(x=>x.status==='accepted');
+  let h='<div><h3>Tu ID</h3><div class="fid"><b>'+rkEsc(frFmt(code))+'</b><button class="btn alt" id="frCopy" type="button">Copiar</button></div><p class="fmsg">Pasale este ID a quien quieras agregar.</p></div>';
+  h+='<div><h3>Añadir amigos</h3><div class="fadd"><input id="frIn" maxlength="9" placeholder="ID DE TU AMIGO" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="ID de tu amigo"><button class="btn" id="frSend" type="button">Enviar</button></div><p class="fmsg" id="frMsg"></p></div>';
+  if(inc.length)h+='<div><h3>Solicitudes ('+inc.length+')</h3>'+inc.map(x=>'<div class="frow"><span><b>'+rkEsc(x.name)+'</b> te envió una solicitud</span><button class="btn" data-a="acc" data-id="'+x.id+'" type="button">Aceptar</button><button class="btn alt" data-a="den" data-id="'+x.id+'" type="button">Denegar</button></div>').join('')+'</div>';
+  if(out.length)h+='<div><h3>Enviadas</h3>'+out.map(x=>'<div class="frow"><span>'+rkEsc(x.name)+'<small>Esperando respuesta</small></span><button class="btn alt" data-a="del" data-id="'+x.id+'" type="button">Cancelar</button></div>').join('')+'</div>';
+  h+='<div><h3>Mis amigos ('+fr.length+')</h3>'+(fr.length?fr.map(x=>'<div class="frow"><span><b>'+rkEsc(x.name)+'</b><small>Nivel '+rkEsc(x.level)+' · ID '+rkEsc(frFmt(x.code))+'</small></span><button class="btn alt" data-a="del" data-id="'+x.id+'" type="button">Quitar</button></div>').join(''):'<p class="rnote">Todavía no tenés amigos. ¡Usá "Añadir amigos" con el ID de alguien!</p>')+'</div>';
+  box.innerHTML=h;
+  const msg=(t,k)=>{const m=$('#frMsg');m.textContent=t;m.className='fmsg '+(k||'')};
+  $('#frCopy').onclick=()=>{try{navigator.clipboard.writeText(code).then(()=>toast('ID copiado'),()=>toast('No se pudo copiar'))}catch(e){toast('No se pudo copiar')}};
+  const inp=$('#frIn');inp.oninput=()=>{inp.value=inp.value.toUpperCase().replace(/[^A-Z0-9-]/g,'')};
+  $('#frSend').onclick=async()=>{
+    const v=inp.value.toUpperCase().replace(/[^A-Z0-9]/g,'');
+    if(v.length!==8){msg('El ID tiene 8 letras y números.','bad');return}
+    $('#frSend').disabled=true;
+    try{
+      const r=await sb.rpc('friend_request',{p_code:v});
+      if(r.error)throw r.error;
+      const T={sent:['¡Solicitud enviada!','ok'],accepted:['¡Ya son amigos!','ok'],not_found:['No existe ese ID. Revisalo.','bad'],self:['Ese es tu propio ID.','bad'],already_friends:['Ya son amigos.','bad'],already_sent:['Ya le enviaste una solicitud.','bad'],too_many:['Tenés muchas solicitudes pendientes.','bad']}[r.data]||['No se pudo enviar.','bad'];
+      if(r.data==='sent'||r.data==='accepted'){renderFriends();toast(T[0])}else msg(T[0],T[1]);
+    }catch(e){msg('No se pudo enviar. Probá de nuevo.','bad')}
+    finally{const b=$('#frSend');if(b)b.disabled=false}
+  };
+  box.onclick=async e=>{
+    const b=e.target.closest('button[data-a]');if(!b)return;
+    const id=Number(b.dataset.id),a=b.dataset.a;b.disabled=true;
+    try{
+      const r=a==='del'?await sb.rpc('friend_remove',{p_id:id}):await sb.rpc('friend_respond',{p_id:id,p_accept:a==='acc'});
+      if(r.error)throw r.error;
+      if(a==='acc')toast('¡Solicitud aceptada!');
+      renderFriends();
+    }catch(x){toast('No se pudo completar. Probá de nuevo.');b.disabled=false}
+  };
 }
 
 /* --- pantalla de ranking: una sola lista ordenada por XP --- */
