@@ -244,6 +244,10 @@ html{background:#0d2540}
 <style>
 /* ranking y cuenta */
 #auth .wbox input{text-transform:none;letter-spacing:0;font-size:17px;text-align:left;font-weight:600}
+.ghost.red{color:var(--bad);border-color:var(--bad)}
+.ghost.red:hover{color:var(--bad);border-color:var(--bad);background:rgba(239,90,95,.1)}
+.btn.danger{background:var(--bad);color:var(--ink);box-shadow:0 3px 0 #a93a3e}
+.plink{justify-self:center;font-family:var(--label);font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--celeste);text-decoration:underline}
 #wmsg{min-height:1.4em;font-weight:700;font-size:14px;color:var(--bad);margin:0}
 #amsg{min-height:1.4em;font-weight:700;font-size:14px;color:var(--bad);margin:0}
 #amsg.ok{color:var(--good)}
@@ -481,6 +485,8 @@ html{background:#0d2540}
     <div class="wact"><button class="btn gold" id="ago" type="submit">Ingresar</button><button class="btn alt" id="acancel" type="button">Cerrar</button></div>
     <button class="ghost" id="aswitch" type="button"></button>
     <button class="ghost" id="areset" type="button">Olvidé mi contraseña</button>
+    <button class="ghost red" id="adel" type="button" hidden>Eliminar cuenta</button>
+    <a class="plink" id="apriv" href="privacidad.html" target="_blank" rel="noopener">Política de privacidad</a>
   </form>
 </div>
 
@@ -3174,14 +3180,18 @@ function openAuth(mode,fromWelcome){
     signup:['Crear cuenta','Registrate con tu correo para competir en el ranking.','Crear cuenta','Ya tengo cuenta · Ingresar'],
     reset:['Recuperar contraseña','Te mandamos un enlace a tu correo para elegir una nueva.','Enviar enlace','Volver a ingresar'],
     newpass:['Nueva contraseña','Elegí tu nueva contraseña (mínimo 6 caracteres).','Guardar',''],
-    account:['Tu cuenta','Sesión iniciada con '+(ME?ME.email:''),'Cerrar sesión','']
+    account:['Tu cuenta','Sesión iniciada con '+(ME?ME.email:''),'Cerrar sesión',''],
+    delete:['¿Eliminar tu cuenta?','Se borran tu perfil, tu XP, tus récords, tu lugar en el ranking y tus amigos. No se puede deshacer. Lo que tenés guardado en este celular se mantiene. Escribí tu contraseña para confirmar.','Eliminar para siempre','']
   }[mode];
   $('#atitle').textContent=cfg[0];$('#atext').textContent=cfg[1];$('#ago').textContent=cfg[2];
   $('#aswitch').textContent=cfg[3];$('#aswitch').hidden=!cfg[3];
   $('#areset').hidden=mode!=='login';
   $('#aemail').hidden=!(mode==='login'||mode==='signup'||mode==='reset');
-  $('#apass').hidden=!(mode==='login'||mode==='signup'||mode==='newpass');
-  $('#apass').autocomplete=mode==='login'?'current-password':'new-password';
+  $('#apass').hidden=!(mode==='login'||mode==='signup'||mode==='newpass'||mode==='delete');
+  $('#apass').autocomplete=(mode==='login'||mode==='delete')?'current-password':'new-password';
+  $('#adel').hidden=mode!=='account';
+  $('#ago').classList.toggle('gold',mode!=='delete');$('#ago').classList.toggle('danger',mode==='delete');
+  $('#acancel').textContent=mode==='delete'?'Cancelar':'Cerrar';
   $('#apass').value='';aMsg('');
   $('#auth').hidden=false;
   if(!$('#aemail').hidden&&!$('#aemail').value)setTimeout(()=>$('#aemail').focus(),50);
@@ -3191,7 +3201,8 @@ function closeAuth(){
   if(aFromWelcome&&!S.name&&!ME)openWelcome(false);
   aFromWelcome=false;
 }
-$('#acancel').onclick=closeAuth;
+$('#acancel').onclick=()=>{if(aMode==='delete')openAuth('account',false);else closeAuth()};
+$('#adel').onclick=()=>openAuth('delete',false);
 $('#aswitch').onclick=()=>openAuth(aMode==='login'?'signup':'login',aFromWelcome);
 $('#areset').onclick=()=>openAuth('reset',aFromWelcome);
 $('#accBtn').onclick=()=>openAuth(ME?'account':'login',false);
@@ -3204,6 +3215,22 @@ $('#aform').addEventListener('submit',async e=>{
     go.disabled=true;
     try{await sb.auth.signOut()}catch(x){}
     go.disabled=false;$('#auth').hidden=true;toast('Sesión cerrada');return;
+  }
+  if(aMode==='delete'){
+    if(!ME)return;
+    if(pass.length<6){aMsg('Escribí tu contraseña para confirmar.');return}
+    go.disabled=true;aMsg('Un momento…',true);
+    try{
+      const c=await sb.auth.signInWithPassword({email:ME.email,password:pass});
+      if(c.error){aMsg(/invalid/i.test(String(c.error.message||''))?'Contraseña incorrecta.':authErr(c.error));return}
+      const d=await sb.rpc('delete_my_account');
+      if(d.error){aMsg('No se pudo eliminar la cuenta. Probá de nuevo.');return}
+      try{await sb.auth.signOut({scope:'local'})}catch(x){}
+      lastSig='';lastAv='';pulledFor='';
+      $('#auth').hidden=true;$('#apass').value='';toast('Tu cuenta se eliminó');
+    }catch(x){aMsg('No hay conexión. Probá de nuevo.')}
+    finally{go.disabled=false}
+    return;
   }
   if(aMode!=='newpass'&&!/^\S+@\S+\.\S+$/.test(email)){aMsg('Escribí un correo válido.');return}
   if(aMode!=='reset'&&pass.length<6){aMsg('La contraseña debe tener al menos 6 caracteres.');return}
