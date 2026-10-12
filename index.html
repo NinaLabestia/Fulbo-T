@@ -294,7 +294,58 @@ html{background:#0d2540}
 .rstats b{display:block;font-family:var(--display);font-weight:400;font-size:18px}
 .rstats span{font-family:var(--label);font-weight:700;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
 </style>
-<style>#dlg .ghost{justify-self:center}</style><style>.sws{display:flex;gap:5px;flex-wrap:wrap}.sw{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);padding:0}.item .btn.alt{padding:7px 8px;font-size:13px}</style></head>
+<style>#dlg .ghost{justify-self:center}</style><style>.sws{display:flex;gap:5px;flex-wrap:wrap}.sw{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);padding:0}.item .btn.alt{padding:7px 8px;font-size:13px}</style><style>
+/* amigos: perfil estilo Instagram */
+#fbox.fr{gap:12px;padding:16px}
+.igh{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:14px}
+.igav{position:relative;width:64px;height:64px;border-radius:50%;background:var(--celeste);color:var(--ink);display:grid;place-items:center;font-family:var(--display);font-size:28px;flex:none}
+.igav.sm{width:38px;height:38px;font-size:17px;background:#2f6192;color:var(--fg)}
+.igst{display:grid;grid-template-columns:repeat(3,1fr);text-align:center}
+.igst b{display:block;font-family:var(--body);font-weight:700;font-size:20px;line-height:1.1;font-variant-numeric:tabular-nums}
+.igst span{font-size:13px;color:var(--celeste)}
+.igid{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.igid b{display:block;font-weight:700;font-size:15px;overflow-wrap:anywhere}
+.igid small{color:var(--muted);font-size:12px}
+.igact{display:flex;align-items:center;gap:4px}
+.igb{display:flex;align-items:center;gap:6px;background:none;border:0;padding:8px 10px;font-weight:600;font-size:15px;color:var(--fg);border-radius:8px}
+.igb:hover{background:var(--bg2)}
+.igb.ico{padding:8px}
+.igtabs{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--line)}
+.igtabs button{display:flex;align-items:center;justify-content:center;gap:7px;background:none;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;padding:10px 4px;font-weight:600;font-size:15px;color:var(--muted)}
+.igtabs button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--fg)}
+.igbadge{background:var(--bad);color:#fff;border-radius:999px;font-size:12px;font-weight:700;min-width:20px;height:20px;line-height:20px;padding:0 6px;text-align:center}
+.igrow{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;min-width:0}
+.igin{flex:1;min-width:0}
+.igin b{display:block;font-weight:700;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.igin small{display:block;color:var(--muted);font-size:12px}
+.igtxt{background:none;border:0;padding:8px 6px;font-weight:600;font-size:15px;color:var(--fg);border-radius:8px;white-space:nowrap}
+.igtxt:hover:not([disabled]){background:var(--panel)}
+.igtxt.mute{color:var(--muted)}
+.igtxt[disabled]{opacity:.4;cursor:default}
+.igx{background:none;border:0;padding:8px;color:var(--muted);font-size:15px;line-height:1;border-radius:8px}
+.igx:hover{color:var(--fg);background:var(--panel)}
+.igon{position:absolute;right:-1px;bottom:-1px;width:12px;height:12px;border-radius:50%;background:#5d7390;border:2px solid var(--bg2)}
+.igon.on{background:var(--good)}
+.igsub{margin:6px 0 0;font-family:var(--label);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.igadd{display:flex;align-items:center;gap:8px;background:var(--bg);border-radius:10px;padding:4px 8px 4px 14px}
+.igadd input{flex:1;min-width:0;background:none;border:0;color:var(--fg);font:600 16px var(--body);padding:10px 0;text-transform:uppercase}
+.igadd input::placeholder{color:var(--muted);text-transform:none;font-weight:400}
+.igadd input:focus{outline:none}
+.igvis{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:14px;color:var(--fg);cursor:pointer}
+.igvis input{position:absolute;opacity:0;pointer-events:none}
+.igsw{position:relative;width:46px;height:28px;border-radius:999px;background:#3a4d63;flex:none;transition:background .2s}
+.igsw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .2s}
+.igvis input:checked+.igsw{background:var(--good)}
+.igvis input:checked+.igsw::after{transform:translateX(18px)}
+.igvis input:focus-visible+.igsw{outline:3px solid var(--sun);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.igsw,.igsw::after{transition:none}}
+@media (max-width:380px){.igtabs button{font-size:13px;gap:4px}.igtabs svg{display:none}}
+.pfw{position:absolute;inset:0;border-radius:50%;overflow:hidden}
+.pfw svg{display:block;width:100%;height:100%}
+#frMyAv{cursor:pointer}
+.igav.pfp{width:92px;height:92px;margin:4px auto;font-size:40px}
+</style>
+</head>
 <body>
 <div id="intro" aria-hidden="true">
   <div class="rays"></div>
@@ -542,6 +593,26 @@ const REFS=[
  {id:'rayas',name:'Negro y rayas blancas',lvl:98,shirt:'#111317',alt:'#f4f4f6',pat:'stripes',shorts:'#15171c',socks:'#15171c',trim:'#f4f4f6'},
  {id:'negro',name:'Todo negro',lvl:99,shirt:'#14161b',pat:'plain',shorts:'#14161b',socks:'#14161b',trim:'#ffffff'}
 ];
+/* iconos de perfil (se dibujan en un cuadro de 64x64, el círculo lo recorta) */
+const ICONS=[
+ {id:'inicial',name:'Mi inicial',price:0},
+ {id:'diablo',name:'Diablo rojo',price:100,bg:'#5a0d14',svg:'<path d="M17 26Q10 12 20 6Q20 17 28 22Z" fill="#2a0508"/><path d="M47 26Q54 12 44 6Q44 17 36 22Z" fill="#2a0508"/><ellipse cx="32" cy="38" rx="18" ry="19" fill="#e02a2a"/><path d="M20 32L30 36L21 39Z" fill="#ffe14a"/><path d="M44 32L34 36L43 39Z" fill="#ffe14a"/><circle cx="25" cy="36.3" r="1.4" fill="#2a0508"/><circle cx="39" cy="36.3" r="1.4" fill="#2a0508"/><path d="M18 29L30 34M46 29L34 34" stroke="#2a0508" stroke-width="2.6" stroke-linecap="round"/><path d="M21 46Q32 56 43 46Q32 50 21 46Z" fill="#2a0508"/><path d="M25 47L27 51L29 49M35 49L37 51L39 47" fill="#fff"/><path d="M28 56L32 63L36 56Z" fill="#2a0508"/>'},
+ {id:'demonio',name:'Demonio morado',price:200,bg:'#1d0b33',svg:'<path d="M17 30Q3 24 8 5Q19 13 25 23Z" fill="#0e0519"/><path d="M47 30Q61 24 56 5Q45 13 39 23Z" fill="#0e0519"/><ellipse cx="32" cy="38" rx="18" ry="19" fill="#8a3fd0"/><circle cx="24" cy="34" r="4.6" fill="#7dff4a"/><circle cx="40" cy="34" r="4.6" fill="#7dff4a"/><ellipse cx="24" cy="34" rx="1.1" ry="3.6" fill="#0e0519"/><ellipse cx="40" cy="34" rx="1.1" ry="3.6" fill="#0e0519"/><path d="M18 28L29 30M46 28L35 30" stroke="#0e0519" stroke-width="2.4" stroke-linecap="round"/><path d="M20 45Q32 54 44 45" stroke="#0e0519" stroke-width="2.8" fill="none" stroke-linecap="round"/><path d="M24 47L26.5 52L29 49M35 49L37.5 52L40 47" fill="#fff"/>'},
+ {id:'calavera',name:'Calavera demoníaca',price:300,bg:'#160a0a',svg:'<path d="M15 17Q8 8 13 1Q20 7 23 13Z" fill="#ff7a1a"/><path d="M49 17Q56 8 51 1Q44 7 41 13Z" fill="#ff7a1a"/><path d="M32 8C18 8 12 18 14 30C15 36 19 38 20 42L20 52L26 52L26 47L30 47L30 52L34 52L34 47L38 47L38 52L44 52L44 42C45 38 49 36 50 30C52 18 46 8 32 8Z" fill="#f0ead8"/><ellipse cx="24" cy="29" rx="5.6" ry="6.6" fill="#150a0a"/><ellipse cx="40" cy="29" rx="5.6" ry="6.6" fill="#150a0a"/><circle cx="24" cy="30" r="2.1" fill="#ff3030"/><circle cx="40" cy="30" r="2.1" fill="#ff3030"/><path d="M32 36L29 42H35Z" fill="#150a0a"/><path d="M26 47V52M30 47V52M34 47V52M38 47V52" stroke="#150a0a" stroke-width="1"/>'},
+ {id:'llamas',name:'Demonio en llamas',price:400,bg:'#2b0a00',svg:'<path d="M14 28Q6 14 18 4Q18 14 25 14Q25 6 32 0Q33 12 40 14Q45 6 50 12Q60 20 50 28Z" fill="#ff7a1a"/><path d="M22 26Q18 18 26 12Q27 18 32 18Q37 14 40 12Q46 18 42 26Z" fill="#ffd23d"/><ellipse cx="32" cy="40" rx="16" ry="18" fill="#150c0c"/><path d="M20 36L30 39L21 42Z" fill="#ffd23d"/><path d="M44 36L34 39L43 42Z" fill="#ffd23d"/><path d="M21 50L25 46L29 51L33 46L37 51L41 46L44 50" stroke="#ff7a1a" stroke-width="2.4" fill="none" stroke-linejoin="round"/>'},
+ {id:'payaso',name:'Payaso alegre',price:100,bg:'#12304f',svg:'<circle cx="12" cy="30" r="9" fill="#ff7a1a"/><circle cx="52" cy="30" r="9" fill="#ff7a1a"/><circle cx="17" cy="17" r="7" fill="#ffb21c"/><circle cx="47" cy="17" r="7" fill="#ffb21c"/><ellipse cx="32" cy="37" rx="17" ry="19" fill="#fdf0e4"/><path d="M24 31L27 26L30 31L27 36Z" fill="#2d6cc0"/><path d="M34 31L37 26L40 31L37 36Z" fill="#2d6cc0"/><circle cx="22" cy="42" r="3.4" fill="#ffb3b3" opacity=".8"/><circle cx="42" cy="42" r="3.4" fill="#ffb3b3" opacity=".8"/><circle cx="32" cy="39" r="5" fill="#e8222c"/><circle cx="30.5" cy="37.4" r="1.4" fill="#fff" opacity=".7"/><path d="M20 46Q32 60 44 46Q32 52 20 46Z" fill="#e8222c"/>'},
+ {id:'payasoTriste',name:'Payaso triste',price:100,bg:'#242444',svg:'<circle cx="12" cy="30" r="9" fill="#3a7bd5"/><circle cx="52" cy="30" r="9" fill="#3a7bd5"/><circle cx="17" cy="17" r="7" fill="#5fa0ee"/><circle cx="47" cy="17" r="7" fill="#5fa0ee"/><ellipse cx="32" cy="37" rx="17" ry="19" fill="#f4f6fa"/><path d="M21 31Q25 34 29 31M35 31Q39 34 43 31" stroke="#222" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M23 36Q21 41 23 43Q25 41 23 36Z" fill="#74c0ff"/><path d="M25 35V46M39 35V46" stroke="#3a7bd5" stroke-width="1.6" opacity=".7"/><circle cx="32" cy="39" r="4.6" fill="#e8222c"/><path d="M23 52Q32 44 41 52" stroke="#e8222c" stroke-width="3" fill="none" stroke-linecap="round"/>'},
+ {id:'payasoFiesta',name:'Payaso de fiesta',price:200,bg:'#3a1b5a',svg:'<circle cx="13" cy="34" r="8" fill="#ff4a4a"/><circle cx="51" cy="34" r="8" fill="#ff4a4a"/><ellipse cx="32" cy="40" rx="17" ry="18" fill="#fdf0e4"/><path d="M20 20L32 0L44 20Z" fill="#7b3fc4"/><path d="M26 14L38 14L36 9L28 9Z" fill="#ffd23d"/><ellipse cx="32" cy="20" rx="14" ry="3.4" fill="#ffd23d"/><circle cx="32" cy="1.8" r="3.6" fill="#ff4a4a"/><circle cx="25" cy="35" r="2.4" fill="#222"/><circle cx="39" cy="35" r="2.4" fill="#222"/><circle cx="32" cy="42" r="4.6" fill="#e8222c"/><path d="M22 48Q32 58 42 48" stroke="#e8222c" stroke-width="3" fill="none" stroke-linecap="round"/>'},
+ {id:'payasoMalo',name:'Payaso malvado',price:300,bg:'#0b1a10',svg:'<circle cx="12" cy="30" r="9" fill="#2fbf5b"/><circle cx="52" cy="30" r="9" fill="#2fbf5b"/><circle cx="17" cy="17" r="7" fill="#1f9d45"/><circle cx="47" cy="17" r="7" fill="#1f9d45"/><ellipse cx="32" cy="37" rx="17" ry="19" fill="#e6efd8"/><ellipse cx="25" cy="34" rx="4.2" ry="3.4" fill="#111"/><ellipse cx="39" cy="34" rx="4.2" ry="3.4" fill="#111"/><circle cx="25" cy="34" r="1.2" fill="#ffe14a"/><circle cx="39" cy="34" r="1.2" fill="#ffe14a"/><path d="M18 27L30 32M46 27L34 32" stroke="#111" stroke-width="3" stroke-linecap="round"/><circle cx="32" cy="40" r="4.6" fill="#c0101a"/><path d="M15 43Q32 64 49 43Q32 53 15 43Z" fill="#a50d16"/><path d="M19 45L22 50L25 47L28 52L32 48L36 52L39 47L42 50L45 45Q32 54 19 45Z" fill="#fff"/>'},
+ {id:'pelota',name:'Pelota',price:100,bg:'#0f3b6b',svg:'<defs><clipPath id="cpPel"><circle cx="32" cy="32" r="24"/></clipPath></defs><circle cx="32" cy="32" r="24" fill="#f5f5f2"/><g clip-path="url(#cpPel)" fill="#1b1b1b"><polygon points="32,23 40.6,29.3 37.3,39.4 26.7,39.4 23.4,29.3"/><polygon points="32,-2 41,3 38,11 26,11 23,3"/><polygon points="66,22 62,32 54,30 54,20 60,16"/><polygon points="-2,22 4,16 10,20 10,30 2,32"/><polygon points="12,66 14,56 24,54 30,62 22,68"/><polygon points="52,66 42,68 34,62 40,54 50,56"/></g><path d="M32 23V12M40.6 29.3L54 24M37.3 39.4L44 54M26.7 39.4L20 54M23.4 29.3L10 24" stroke="#9aa5b3" stroke-width="1.6"/><circle cx="32" cy="32" r="24" fill="none" stroke="#0a0a0a" stroke-width="1.5"/>'},
+ {id:'camiseta',name:'Camiseta celeste y blanca',price:100,bg:'#12304f',svg:'<defs><clipPath id="cpCam"><path d="M22 10L8 19L13 30L20 26V55H44V26L51 30L56 19L42 10Q32 19 22 10Z"/></clipPath></defs><path d="M22 10L8 19L13 30L20 26V55H44V26L51 30L56 19L42 10Q32 19 22 10Z" fill="#fff"/><g clip-path="url(#cpCam)" fill="#74acdf"><rect x="8" y="0" width="6" height="64"/><rect x="20" y="0" width="6" height="64"/><rect x="32" y="0" width="6" height="64"/><rect x="44" y="0" width="6" height="64"/></g><path d="M22 10Q32 19 42 10" stroke="#12304f" stroke-width="2.6" fill="none"/><path d="M22 10L8 19L13 30L20 26V55H44V26L51 30L56 19L42 10" stroke="#0b1e33" stroke-width="1.6" fill="none" stroke-linejoin="round"/>'},
+ {id:'diez',name:'El número 10',price:200,bg:'#0b2a6e',svg:'<path d="M12 14L14 10L16 14L20 15L16 17L14 21L12 17L8 15Z" fill="#ffc83d" opacity=".9"/><path d="M50 10L51.5 7L53 10L56 11L53 12.5L51.5 15.5L50 12.5L47 11Z" fill="#ffc83d" opacity=".9"/><text x="32" y="48" text-anchor="middle" font-family="Anton,Impact,sans-serif" font-size="38" fill="#ffc83d" stroke="#05163a" stroke-width="1.5" paint-order="stroke">10</text>'},
+ {id:'guante',name:'Guante de arquero',price:200,bg:'#0e3b24',svg:'<g fill="#e8ff59" stroke="#7e9a00" stroke-width="1.4"><rect x="17" y="12" width="7" height="26" rx="3.5"/><rect x="25" y="7" width="7" height="30" rx="3.5"/><rect x="33" y="7" width="7" height="30" rx="3.5"/><rect x="41" y="12" width="7" height="26" rx="3.5"/><rect x="7" y="32" width="7" height="18" rx="3.5" transform="rotate(-28 10 41)"/><rect x="16" y="28" width="33" height="26" rx="10"/></g><rect x="19" y="50" width="27" height="9" rx="2" fill="#15171c"/><path d="M22 54H43" stroke="#e8ff59" stroke-width="1.6"/>'},
+ {id:'tarjeta',name:'Tarjeta roja',price:200,bg:'#2b7a47',svg:'<path d="M0 32H64M32 0V64" stroke="#fff" stroke-width="1.6" opacity=".35"/><circle cx="32" cy="32" r="14" fill="none" stroke="#fff" stroke-width="1.6" opacity=".35"/><rect x="20" y="11" width="25" height="38" rx="3.5" fill="#e8222c" stroke="#fff" stroke-width="1.8" transform="rotate(14 32 30)"/><rect x="24" y="15" width="5" height="26" rx="2" fill="#fff" opacity=".28" transform="rotate(14 32 30)"/>'},
+ {id:'fuego',name:'Pelota en llamas',price:300,bg:'#1a0a05',svg:'<path d="M32 2Q40 14 46 12Q54 24 50 36Q46 57 32 59Q18 57 14 36Q10 24 18 12Q24 14 32 2Z" fill="#ff7a1a"/><path d="M32 14Q40 24 41 34Q39 49 32 51Q25 49 23 34Q24 24 32 14Z" fill="#ffd23d"/><defs><clipPath id="cpFue"><circle cx="32" cy="42" r="14"/></clipPath></defs><circle cx="32" cy="42" r="14" fill="#f5f5f2"/><g clip-path="url(#cpFue)" fill="#1b1b1b"><polygon points="32,36 37,39.6 35,45.6 29,45.6 27,39.6"/><polygon points="32,25 38,28 36,32 28,32 26,28"/><polygon points="50,40 47,48 42,46 42,40 46,36"/><polygon points="14,40 18,36 22,40 22,46 17,48"/></g><circle cx="32" cy="42" r="14" fill="none" stroke="#0a0a0a" stroke-width="1.3"/>'},
+ {id:'copa',name:'La copa',price:400,bg:'#1b1240',svg:'<path d="M20 12H44V25Q44 38 32 41Q20 38 20 25Z" fill="#ffd34a"/><path d="M20 15H12Q12 28 22 30M44 15H52Q52 28 42 30" stroke="#e0a418" stroke-width="3.2" fill="none"/><rect x="29" y="40" width="6" height="9" fill="#e0a418"/><rect x="20" y="48" width="24" height="7" rx="2.5" fill="#ffd34a"/><path d="M25 15V28" stroke="#fff" stroke-width="2.6" opacity=".55" stroke-linecap="round"/>'},
+ {id:'corona',name:'Corona de campeón',price:500,bg:'#3a1b7a',svg:'<path d="M12 46L9 21L24 33L32 15L40 33L55 21L52 46Z" fill="#ffd34a"/><rect x="12" y="46" width="40" height="9" rx="2.5" fill="#e0a418"/><circle cx="9" cy="19.5" r="3.2" fill="#ef5a5f"/><circle cx="32" cy="13.5" r="3.4" fill="#74acdf"/><circle cx="55" cy="19.5" r="3.2" fill="#ef5a5f"/><circle cx="22" cy="50.5" r="1.8" fill="#fff"/><circle cx="32" cy="50.5" r="1.8" fill="#fff"/><circle cx="42" cy="50.5" r="1.8" fill="#fff"/>'}
+];
 const NAME_PRICE=100,NAME_FREE=2;
 const CATS={kit:KITS,ball:BALLS,stadium:STADS,fest:FESTS,trail:TRAILS,num:NUMS,cut:CUTS,hc:HCOLS};
 /* economía: lo que vale más de 100 monedas cuesta el doble; las primeras compras (100) siguen baratas. Los números de camiseta quedan como se pidieron. */
@@ -570,7 +641,7 @@ const CRACKS=[
  {id:'tatu',name:'El tatuado',price:1000,skin:'#d9a57c',stubble:true,bare:true,up:{pow:2,curve:2}}
 ];
 const UPN={prec:'Puntería',pow:'Potencia',curve:'Efecto'};
-CATS.gk=KEEPS;CATS.pl=CRACKS;
+CATS.gk=KEEPS;CATS.pl=CRACKS;CATS.pf=ICONS;
 const crk=()=>S.eq.pl?CRACKS.find(c=>c.id===S.eq.pl)||null:null;
 const upv=k=>(S.up[k]||0)+((crk()&&crk().up[k])||0);
 function dyeK(k){const d=S.dye&&S.dye[k.id],r=Object.assign({},k);if(d){const o=k.shirt;['shirt','shorts','socks'].forEach(p=>{if(r[p]===o)r[p]=d})}return r}
@@ -620,7 +691,7 @@ const NAME_POOL=PLAYERS.map(p=>p.n).concat(EXTRA_NAMES);
 
 /* ---------- estado guardado ---------- */
 const KEY='potrero-pro-v1';
-const defaults=()=>({coins:40,xp:0,owned:{kit:['celeste'],ball:['clasica'],stadium:['potrero'],fest:['confeti'],trail:['ninguna'],num:['0'],cut:['clasico'],hc:['negro'],gk:['naranja'],pl:[]},eq:{kit:'celeste',ball:'clasica',stadium:'potrero',fest:'confeti',trail:'ninguna',num:'0',cut:'clasico',hc:'negro',gk:'naranja',kk:'',pl:''},dye:{},up:{prec:0,pow:0,curve:0},best:{pen:0,fk:0,clubs:0,stats:0,quotes:0,liga:0},gm:{pen:0,fk:0},sv:{pen:null,fk:null,liga:null},goals:0,mute:false,name:'',nameFree:NAME_FREE,nameTokens:0,pass:{claimed:[],ref:false,refOwned:[],refEq:'amarillo'},daily:{last:'',streak:0}});
+const defaults=()=>({coins:40,xp:0,owned:{kit:['celeste'],ball:['clasica'],stadium:['potrero'],fest:['confeti'],trail:['ninguna'],num:['0'],cut:['clasico'],hc:['negro'],gk:['naranja'],pl:[],pf:['inicial']},eq:{kit:'celeste',ball:'clasica',stadium:'potrero',fest:'confeti',trail:'ninguna',num:'0',cut:'clasico',hc:'negro',gk:'naranja',kk:'',pl:'',pf:'inicial'},dye:{},up:{prec:0,pow:0,curve:0},best:{pen:0,fk:0,clubs:0,stats:0,quotes:0,liga:0},gm:{pen:0,fk:0},sv:{pen:null,fk:null,liga:null},goals:0,mute:false,name:'',nameFree:NAME_FREE,nameTokens:0,pass:{claimed:[],ref:false,refOwned:[],refEq:'amarillo'},daily:{last:'',streak:0}});
 function merge(a,b){for(const k in b){if(b[k]&&typeof b[k]==='object'&&!Array.isArray(b[k])&&a[k]&&typeof a[k]==='object')merge(a[k],b[k]);else a[k]=b[k]}return a}
 function load(){try{const r=localStorage.getItem(KEY);if(r)return merge(defaults(),JSON.parse(r))}catch(e){}return defaults()}
 let S=load();
@@ -2756,7 +2827,7 @@ function ligaScene(win){
 
 /* ---------- tienda ---------- */
 let shopTab='kit';
-const TABS=[['kit','Camiseta'],['gk','Arquero'],['pl','Jugador'],['num','Número'],['cut','Corte'],['hc','Color de pelo'],['ball','Pelota'],['stadium','Estadio'],['fest','Festejo'],['trail','Estela'],['ref','Árbitro'],['extra','Extras'],['up','Mejoras']];
+const TABS=[['kit','Camiseta'],['gk','Arquero'],['pl','Jugador'],['pf','Perfil'],['num','Número'],['cut','Corte'],['hc','Color de pelo'],['ball','Pelota'],['stadium','Estadio'],['fest','Festejo'],['trail','Estela'],['ref','Árbitro'],['extra','Extras'],['up','Mejoras']];
 function renderShop(tab){
   shopTab=tab;
   const t=$('#tabs'),keep=t.scrollLeft;t.innerHTML='';
@@ -2793,6 +2864,22 @@ function renderShop(tab){
       const b=document.createElement('button');b.className='btn'+(owned?' alt':' gold');
       b.textContent=on?'Puesto':owned?'Equipar':'Pase · nivel '+r.lvl;b.disabled=on||!owned;
       b.onclick=()=>{S.pass.refEq=r.id;save();renderShop('ref')};
+      d.appendChild(b);box.appendChild(d);
+    });
+    return;
+  }
+  if(tab==='pf'){
+    ICONS.forEach(it=>{
+      const owned=S.owned.pf.includes(it.id),on=S.eq.pf===it.id;
+      const d=document.createElement('div');d.className='item'+(on?' on':'');
+      const a=document.createElement('div');a.className='igav pfp';a.innerHTML=pfInner(it.id,S.name);d.appendChild(a);
+      const h=document.createElement('h3');h.textContent=it.name;d.appendChild(h);
+      const b=document.createElement('button');b.className='btn'+(owned?' alt':' gold');
+      b.textContent=on?'Puesto':owned?'Equipar':'Comprar · '+it.price;b.disabled=on;
+      b.onclick=()=>{
+        if(!owned){if(S.coins<it.price){toast('Te faltan '+(it.price-S.coins)+' monedas');return}S.coins-=it.price;S.owned.pf.push(it.id);sOk()}
+        S.eq.pf=it.id;save();refreshTop();renderShop('pf');
+      };
       d.appendChild(b);box.appendChild(d);
     });
     return;
@@ -2970,7 +3057,7 @@ function claimReward(rw){
 /* La URL y la clave "publishable" son públicas por diseño: la seguridad real está en las reglas (RLS) de la base. */
 var SB_URL='https://rgppvdgetqnucucrjngn.supabase.co';
 var SB_KEY='sb_publishable_jnNOZ-5qZUZVWZq2xyK30g_wSuCR2mQ';
-var sb=null,ME=null,cqT=0,lastSig='',syncing=null,pulledFor='';
+var sb=null,ME=null,cqT=0,lastSig='',lastAv='',syncing=null,pulledFor='';
 try{if(window.supabase&&window.supabase.createClient)sb=window.supabase.createClient(SB_URL,SB_KEY)}catch(e){sb=null}
 const BEST_KEYS=['pen','fk','clubs','stats','quotes','liga'];
 const RANK_TABS=[['xp','Nivel'],['pen','Penales'],['fk','Tiros libres'],['clubs','Por clubes'],['stats','Por datos'],['quotes','Por frases'],['liga','Copas']];
@@ -2989,6 +3076,8 @@ async function cloudSync(){
   const best={};
   BEST_KEYS.forEach(k=>{const v=Math.floor(Number(S.best[k])||0);if(v>0)best[k]=v});
   const xp=Math.floor(Number(S.xp)||0),name=S.name,goals={pen:Math.floor(Number(S.gm&&S.gm.pen)||0),fk:Math.floor(Number(S.gm&&S.gm.fk)||0)};
+  const av=ME.id+'|'+S.eq.pf;
+  if(av!==lastAv){try{const a=await sb.rpc('set_avatar',{p_avatar:S.eq.pf||'inicial'});if(!a.error)lastAv=av}catch(e){}}
   const sig=ME.id+'|'+name+'|'+xp+'|'+JSON.stringify(best)+JSON.stringify(goals);
   if(sig===lastSig)return;
   syncing=(async()=>{
@@ -3108,7 +3197,7 @@ if(sb){
     refreshAcc();
     if(ev==='PASSWORD_RECOVERY'){setTimeout(()=>openAuth('newpass',false),0);return}
     if(ME&&pulledFor!==ME.id){pulledFor=ME.id;setTimeout(cloudPull,0)}
-    if(!ME){pulledFor='';lastSig=''}
+    if(!ME){pulledFor='';lastSig='';lastAv=''}
   });
 }
 
@@ -3186,32 +3275,66 @@ async function renderFriends(silent){
     $('#frRetry').onclick=renderFriends;
   }
 }
+var FRTAB='friends',FRL=[];
+const FR_IC={
+ copy:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 012-2h9"/></svg>',
+ share:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>',
+ users:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M16 4.6a3.5 3.5 0 010 6.8M18 14.4c2.2.6 3.5 2.6 3.5 5.6"/></svg>',
+ bell:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9a6 6 0 0112 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9z"/><path d="M10 20a2 2 0 004 0"/></svg>',
+ add:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M19 8v6M16 11h6"/></svg>'
+};
+const frIni=n=>rkEsc((String(n||'?').trim().charAt(0)||'?').toUpperCase());
+function pfInner(id,name){
+  const it=ICONS.find(i=>i.id===id);
+  if(!it||!it.svg)return frIni(name);
+  return '<span class="pfw"><svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" fill="'+it.bg+'"/>'+it.svg+'</svg></span>';
+}
 function frDraw(code,list){
+  FRL=list;
   const keep=$('#frIn')?$('#frIn').value:'',wasF=!!$('#frIn')&&document.activeElement===$('#frIn');
   const box=$('#fbox'),inc=list.filter(x=>x.status==='pending'&&x.incoming),out=list.filter(x=>x.status==='pending'&&!x.incoming),fr=list.filter(x=>x.status==='accepted').sort((a,b)=>(b.online?1:0)-(a.online?1:0));
-  let h='<div><h3>Tu ID</h3><div class="fid"><b>'+rkEsc(frFmt(code))+'</b><button class="btn alt" id="frCopy" type="button">Copiar</button></div><p class="fmsg">Pasale este ID a quien quieras agregar.</p><label class="fvis"><input type="checkbox" id="frVis"'+(PRES.visible?' checked':'')+'> Mostrar a mis amigos cuando estoy en línea</label></div>';
-  h+='<div><h3>Añadir amigos</h3><div class="fadd"><input id="frIn" maxlength="9" placeholder="ID DE TU AMIGO" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="ID de tu amigo"><button class="btn" id="frSend" type="button">Enviar</button></div><p class="fmsg" id="frMsg"></p></div>';
-  if(inc.length)h+='<div><h3>Solicitudes ('+inc.length+')</h3>'+inc.map(x=>'<div class="frow"><span><b>'+rkEsc(x.name)+'</b> te envió una solicitud</span><button class="btn" data-a="acc" data-id="'+x.id+'" type="button">Aceptar</button><button class="btn alt" data-a="den" data-id="'+x.id+'" type="button">Denegar</button></div>').join('')+'</div>';
-  if(out.length)h+='<div><h3>Enviadas</h3>'+out.map(x=>'<div class="frow"><span>'+rkEsc(x.name)+'<small>Esperando respuesta</small></span><button class="btn alt" data-a="del" data-id="'+x.id+'" type="button">Cancelar</button></div>').join('')+'</div>';
-  h+='<div><h3>Mis amigos ('+fr.length+')</h3>'+(fr.length?fr.map(x=>'<div class="frow"><span><b>'+rkEsc(x.name)+'</b><small><i class="od'+(x.online?' on':'')+'"></i>'+(x.online?'En línea':'Desconectado')+' · Nivel '+rkEsc(x.level)+'</small></span><div class="acts"><button class="btn" data-a="inv" data-id="'+x.id+'" data-name="'+rkEsc(x.name)+'" type="button"'+(x.online?'':' disabled')+'>Invitar a sala</button><button class="btn alt" data-a="del" data-id="'+x.id+'" type="button">Quitar</button></div></div>').join(''):'<p class="rnote">Todavía no tenés amigos. ¡Usá "Añadir amigos" con el ID de alguien!</p>')+'</div>';
+  const tab=FRTAB;
+  let h='<div class="igh"><div class="igav" id="frMyAv" role="button" tabindex="0" title="Cambiar icono de perfil">'+pfInner(S.eq.pf,S.name)+'</div><div class="igst"><div><b>'+fr.length+'</b><span>Amigos</span></div><div><b>'+inc.length+'</b><span>Solicitudes</span></div><div><b>'+lvl()+'</b><span>Nivel</span></div></div></div>';
+  h+='<div class="igid"><div><b>'+rkEsc(S.name||'Tu jugador')+'</b><small>@'+rkEsc(frFmt(code))+'</small></div><div class="igact"><button class="igb" id="frCopy" type="button">'+FR_IC.copy+'Copiar ID</button><button class="igb ico" id="frShare" type="button" aria-label="Compartir mi ID">'+FR_IC.share+'</button></div></div>';
+  h+='<div class="igtabs" role="tablist"><button type="button" role="tab" data-tab="friends" aria-selected="'+(tab==='friends')+'">'+FR_IC.users+'Amigos</button><button type="button" role="tab" data-tab="req" aria-selected="'+(tab==='req')+'">'+FR_IC.bell+'Solicitudes'+(inc.length?'<span class="igbadge">'+inc.length+'</span>':'')+'</button><button type="button" role="tab" data-tab="add" aria-selected="'+(tab==='add')+'">'+FR_IC.add+'Añadir</button></div>';
+  if(tab==='friends'){
+    h+=fr.length?fr.map(x=>'<div class="igrow"><div class="igav sm">'+pfInner(x.avatar,x.name)+'<i class="igon'+(x.online?' on':'')+'"></i></div><div class="igin"><b>'+rkEsc(x.name)+'</b><small>'+(x.online?'En línea':'Desconectado')+' · Nivel '+rkEsc(x.level)+'</small></div><button class="igtxt" data-a="inv" data-id="'+x.id+'" data-name="'+rkEsc(x.name)+'" type="button"'+(x.online?'':' disabled')+'>Invitar a sala</button><button class="igx" data-a="del" data-id="'+x.id+'" type="button" aria-label="Quitar a '+rkEsc(x.name)+'">&#10005;</button></div>').join(''):'<p class="rnote">Todavía no tenés amigos. Pasá a "Añadir" y escribí el ID de alguien.</p>';
+  }else if(tab==='req'){
+    h+=inc.length?inc.map(x=>'<div class="igrow"><div class="igav sm">'+pfInner(x.avatar,x.name)+'</div><div class="igin"><b>'+rkEsc(x.name)+'</b><small>Quiere ser tu amigo</small></div><button class="igtxt" data-a="acc" data-id="'+x.id+'" type="button">Aceptar</button><button class="igtxt mute" data-a="den" data-id="'+x.id+'" type="button">Denegar</button></div>').join(''):'<p class="rnote">No tenés solicitudes nuevas.</p>';
+    if(out.length)h+='<h4 class="igsub">Enviadas</h4>'+out.map(x=>'<div class="igrow"><div class="igav sm">'+pfInner(x.avatar,x.name)+'</div><div class="igin"><b>'+rkEsc(x.name)+'</b><small>Esperando respuesta</small></div><button class="igtxt mute" data-a="del" data-id="'+x.id+'" type="button">Cancelar</button></div>').join('');
+  }else{
+    h+='<div class="igadd"><input id="frIn" maxlength="9" placeholder="@ID de tu amigo" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="ID de tu amigo"><button class="igtxt" id="frSend" type="button">Enviar</button></div><p class="fmsg" id="frMsg"></p>'
+      +'<label class="igvis"><span>Mostrarme en línea</span><input type="checkbox" id="frVis"'+(PRES.visible?' checked':'')+'><i class="igsw"></i></label>';
+  }
   box.innerHTML=h;
-  const msg=(t,k)=>{const m=$('#frMsg');m.textContent=t;m.className='fmsg '+(k||'')};
+  const msg=(t,k)=>{const m=$('#frMsg');if(m){m.textContent=t;m.className='fmsg '+(k||'')}};
+  const myAv=$('#frMyAv'),goPf=()=>{shopTab='pf';show('shop')};myAv.onclick=goPf;myAv.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();goPf()}};
+  box.querySelectorAll('[data-tab]').forEach(t=>t.onclick=()=>{FRTAB=t.dataset.tab;frDraw(code,FRL)});
   $('#frCopy').onclick=()=>{try{navigator.clipboard.writeText(code).then(()=>toast('ID copiado'),()=>toast('No se pudo copiar'))}catch(e){toast('No se pudo copiar')}};
-  const inp=$('#frIn');if(keep){inp.value=keep;if(wasF)inp.focus()}
-  $('#frVis').onchange=async e=>{const v=e.target.checked;PRES.visible=v;try{await sb.rpc('presence_set_visible',{p_visible:v});toast(v?'Tus amigos te ven en línea':'Apareces desconectado')}catch(x){toast('No se pudo cambiar.')}};
-  inp.oninput=()=>{inp.value=inp.value.toUpperCase().replace(/[^A-Z0-9-]/g,'')};
-  $('#frSend').onclick=async()=>{
-    const v=inp.value.toUpperCase().replace(/[^A-Z0-9]/g,'');
-    if(v.length!==8){msg('El ID tiene 8 letras y números.','bad');return}
-    $('#frSend').disabled=true;
-    try{
-      const r=await sb.rpc('friend_request',{p_code:v});
-      if(r.error)throw r.error;
-      const T={sent:['¡Solicitud enviada!','ok'],accepted:['¡Ya son amigos!','ok'],not_found:['No existe ese ID. Revisalo.','bad'],self:['Ese es tu propio ID.','bad'],already_friends:['Ya son amigos.','bad'],already_sent:['Ya le enviaste una solicitud.','bad'],too_many:['Tenés muchas solicitudes pendientes.','bad']}[r.data]||['No se pudo enviar.','bad'];
-      if(r.data==='sent'||r.data==='accepted'){renderFriends();toast(T[0])}else msg(T[0],T[1]);
-    }catch(e){msg('No se pudo enviar. Probá de nuevo.','bad')}
-    finally{const b=$('#frSend');if(b)b.disabled=false}
+  $('#frShare').onclick=()=>{
+    const txt='Agregame en Fulbo Trivial con mi ID: '+frFmt(code);
+    if(navigator.share){navigator.share({text:txt}).catch(()=>{})}
+    else{try{navigator.clipboard.writeText(txt).then(()=>toast('Mensaje copiado'),()=>toast('No se pudo copiar'))}catch(e){toast('No se pudo copiar')}}
   };
+  const inp=$('#frIn');
+  if(inp){
+    if(keep){inp.value=keep;if(wasF)inp.focus()}
+    inp.oninput=()=>{inp.value=inp.value.toUpperCase().replace(/^@/,'').replace(/[^A-Z0-9-]/g,'')};
+    $('#frSend').onclick=async()=>{
+      const v=inp.value.toUpperCase().replace(/[^A-Z0-9]/g,'');
+      if(v.length!==8){msg('El ID tiene 8 letras y números.','bad');return}
+      $('#frSend').disabled=true;
+      try{
+        const r=await sb.rpc('friend_request',{p_code:v});
+        if(r.error)throw r.error;
+        const T={sent:['¡Solicitud enviada!','ok'],accepted:['¡Ya son amigos!','ok'],not_found:['No existe ese ID. Revisalo.','bad'],self:['Ese es tu propio ID.','bad'],already_friends:['Ya son amigos.','bad'],already_sent:['Ya le enviaste una solicitud.','bad'],too_many:['Tenés muchas solicitudes pendientes.','bad']}[r.data]||['No se pudo enviar.','bad'];
+        if(r.data==='sent'||r.data==='accepted'){inp.value='';renderFriends();toast(T[0])}else msg(T[0],T[1]);
+      }catch(e){msg('No se pudo enviar. Probá de nuevo.','bad')}
+      finally{const b=$('#frSend');if(b)b.disabled=false}
+    };
+  }
+  const vis=$('#frVis');
+  if(vis)vis.onchange=async e=>{const v=e.target.checked;PRES.visible=v;try{await sb.rpc('presence_set_visible',{p_visible:v});toast(v?'Tus amigos te ven en línea':'Apareces desconectado')}catch(x){toast('No se pudo cambiar.')}};
   box.onclick=async e=>{
     const b=e.target.closest('button[data-a]');if(!b)return;
     const id=Number(b.dataset.id),a=b.dataset.a;
