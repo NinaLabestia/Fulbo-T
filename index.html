@@ -226,6 +226,14 @@ blockquote{margin:0;font-family:var(--display);font-size:clamp(22px,6vw,30px);li
 .fadd{display:flex;gap:8px}
 .fadd input{flex:1;min-width:0;font-family:var(--display);font-size:22px;letter-spacing:.14em;text-transform:uppercase;background:var(--bg2);color:var(--fg);border:2px solid var(--line);border-radius:8px;padding:8px;text-align:center}
 .fmsg{margin:0;min-height:1.2em;color:var(--muted)}.fmsg.ok{color:var(--good)}.fmsg.bad{color:var(--bad)}
+.invbar{position:fixed;left:10px;right:10px;bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:60;display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--panel);border:2px solid var(--sun);border-radius:12px;padding:10px 12px;box-shadow:0 8px 24px rgba(0,0,0,.45)}
+.invbar[hidden]{display:none}
+.invbar span{flex:1 1 150px;min-width:0;overflow-wrap:anywhere}
+.invbar .btn{padding:7px 12px;font-size:14px}
+.od{display:inline-block;width:9px;height:9px;border-radius:50%;background:#5d7390;margin-right:6px;vertical-align:baseline}
+.od.on{background:var(--good);box-shadow:0 0 6px var(--good)}
+.frow{flex-wrap:wrap}.frow .acts{display:flex;gap:6px}
+.fvis{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:14px;margin-top:6px}
 </style>
 <style>
 html,body{margin:0;min-height:100%;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
@@ -397,6 +405,7 @@ html{background:#0d2540}
 </div>
 <nav class="tabnav" id="nav" hidden><button type="button" data-go="home"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8v9H3z"/></svg>Inicio</button><button type="button" data-go="rank"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-7"/></svg>Ranking</button><button type="button" data-go="pass"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>Pase</button><button type="button" data-go="shop"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6zM9 8a3 3 0 016 0"/></svg>Tienda</button></nav>
 <div class="welcome" id="dlg" hidden><div class="wbox"><h2 id="dlgT"></h2><p id="dlgM"></p><div class="wact"><button class="btn gold" id="dlgY" type="button"></button><button class="btn alt" id="dlgN" type="button"></button></div><button class="ghost" id="dlgC" type="button" hidden>Seguir jugando</button></div></div>
+<div class="invbar" id="invbar" hidden role="alert"><span id="invTxt"></span><button class="btn" id="invYes" type="button">Aceptar</button><button class="btn alt" id="invNo" type="button">Denegar</button></div>
 <div class="toast" id="toast" role="status"></div>
 <div class="welcome" id="welcome" hidden>
   <form class="wbox" id="wform" autocomplete="off">
@@ -1784,6 +1793,7 @@ function show(id){
   if(id==='friends')renderFriends();
   $('#nav').hidden=!['home','rank','pass','shop'].includes(id);document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.go===id));
   window.scrollTo(0,0);
+  try{invShow()}catch(e){}
 }
 function stopGame(){cancelAnimationFrame(raf);G=null;crowdStop()}
 function mkc(w,h){const c=document.createElement('canvas');c.width=w*2;c.height=h*2;const x=c.getContext('2d');x.scale(2,2);return[c,x]}
@@ -2329,18 +2339,20 @@ function lanLoad(ok,bad){
 function lanSend(m){try{if(NET&&NET.conn&&NET.conn.open)NET.conn.send(m)}catch(e){}}
 function lanClose(){
   if(!NET)return;const n=NET;NET=null;T=T&&T.on?null:T;
+  clearInterval(n.invTimer);
+  try{if(n.invId&&!n.conn&&sb)sb.rpc('invite_cancel',{p_id:n.invId})}catch(e){}
   try{if(n.conn&&n.conn.open)n.conn.send({t:'bye'})}catch(e){}
   setTimeout(()=>{try{n.conn&&n.conn.close()}catch(e){}try{n.peer&&n.peer.destroy()}catch(e){}},200);
 }
 function lanFail(t){lanClose();lanView('start',t)}
 function lanOpen(){lanClose();lanView('start')}
-function lanHost(){
-  lanView('busy','Creando sala…');
+function lanHost(inv){
+  lanView('busy',inv?'Invitando a '+inv.name+'…':'Creando sala…');
   lanLoad(()=>{
     const mk=()=>{
       const code=Array.from({length:4},()=>CODE_CH[Math.floor(Math.random()*CODE_CH.length)]).join('');
       const p=new Peer('fulbo-'+code,lanOpts());
-      p.on('open',()=>{NET={peer:p,host:true,code,conn:null,opp:''};lanView('wait')});
+      p.on('open',()=>{NET={peer:p,host:true,code,conn:null,opp:'',invName:inv?inv.name:''};lanView('wait');if(inv)lanInvite(inv)});
       p.on('connection',c=>{if(!NET||NET.conn){c.close();return}NET.conn=c;lanWire(c)});
       p.on('error',e=>{if(e.type==='unavailable-id'){try{p.destroy()}catch(x){}mk()}else lanFail('No se pudo crear la sala. Revisá tu internet.')});
     };mk();
@@ -2384,7 +2396,7 @@ function lanView(v,t){
      +'<button class="lgopt" id="lanMk"><b>Crear sala</b><span>Te damos un código de 4 letras para pasarle a tu amigo.</span></button>'
      +'<button class="lgopt alt" id="lanJn"><b>Unirme a una sala</b><span>Escribí el código que te pasó tu amigo.</span></button>'
      +'<div class="actions"><button class="btn alt" id="lanHome">Menú</button></div>';
-    go('lanMk',lanHost);go('lanJn',()=>lanView('join'));go('lanHome',()=>show('home'));
+    go('lanMk',()=>lanHost());go('lanJn',()=>lanView('join'));go('lanHome',()=>show('home'));
   }else if(v==='join'){
     b.innerHTML='<h2 class="lgh">Unirme a una sala</h2><p class="lgsub">Escribí el código de 4 letras.</p>'
      +'<input class="lanin" id="lanCode" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Código de sala">'
@@ -2396,7 +2408,7 @@ function lanView(v,t){
     b.innerHTML='<h2 class="lgh">'+t+'</h2><div class="actions"><button class="btn alt" id="lanBack">Cancelar</button></div>';
     go('lanBack',()=>{lanClose();lanView('start')});
   }else if(v==='wait'){
-    b.innerHTML='<h2 class="lgh">Sala creada</h2><p class="lgsub">Pasale este código a tu amigo. Cuando entre, empezamos.</p>'
+    b.innerHTML='<h2 class="lgh">Sala creada</h2>'+(NET.invName?'<p class="lgsub">Invitaste a <b>'+rkEsc(NET.invName)+'</b>. Esperando que acepte…</p>':'')+'<p class="lgsub">'+(NET.invName?'También podés pasarle este código por si no le aparece:':'Pasale este código a tu amigo. Cuando entre, empezamos.')+'</p>'
      +'<div class="lancode">'+NET.code+'</div><p class="lgsub" style="text-align:center">Esperando al otro jugador…</p>'
      +'<div class="actions"><button class="btn alt" id="lanBack">Cancelar</button></div>';
     go('lanBack',()=>{lanClose();lanView('start')});
@@ -3089,7 +3101,7 @@ $('#aform').addEventListener('submit',async e=>{
   }catch(x){aMsg('No hay conexión. Probá de nuevo.')}
   finally{go.disabled=false}
 });
-function refreshAcc(){$('#accBtn').textContent=ME?'Mi cuenta':'Ingresar';try{frT=0;frBadge()}catch(e){}}
+function refreshAcc(){$('#accBtn').textContent=ME?'Mi cuenta':'Ingresar';try{frT=0;frBadge();presPing()}catch(e){}}
 if(sb){
   sb.auth.onAuthStateChange((ev,sess)=>{
     ME=sess&&sess.user?sess.user:null;
@@ -3157,32 +3169,37 @@ function frBadge(){
     if(n){const d=document.createElement('span');d.className='dot';d.textContent=n;b.appendChild(d)}
   }).catch(()=>{});
 }
-async function renderFriends(){
-  const box=$('#fbox');frT=0;
+var FRC='';
+async function renderFriends(silent){
+  const box=$('#fbox');frT=0;if(silent!==true)silent=false;
   if(!sb){box.innerHTML='<p class="rnote">No se pudo conectar con el servidor.</p>';return}
   if(!ME){box.innerHTML='<p class="rnote">Para tener amigos necesitás una cuenta: así tu ID queda guardado aunque cambies de celular.<br><button class="btn" id="frLogin" type="button">Ingresar o crear cuenta</button></p>';$('#frLogin').onclick=()=>openAuth('login',false);return}
-  box.innerHTML='<p class="rnote">Cargando…</p>';
+  if(!silent||!FRC)box.innerHTML='<p class="rnote">Cargando…</p>';
   try{
-    const [c,l]=await Promise.all([sb.rpc('my_friend_code'),sb.rpc('friend_list')]);
+    const [c,l]=await Promise.all([FRC&&silent?{data:FRC}:sb.rpc('my_friend_code'),sb.rpc('friend_list')]);
     if(c.error)throw c.error;if(l.error)throw l.error;
     if($('#friends').hidden)return;
-    frDraw(c.data,l.data||[]);
+    FRC=c.data;frDraw(c.data,l.data||[]);
   }catch(e){
+    if(silent)return;
     box.innerHTML='<p class="rnote">No se pudo cargar tu lista de amigos. Probá de nuevo en un rato.<br><button class="btn" id="frRetry" type="button">Reintentar</button></p>';
     $('#frRetry').onclick=renderFriends;
   }
 }
 function frDraw(code,list){
-  const box=$('#fbox'),inc=list.filter(x=>x.status==='pending'&&x.incoming),out=list.filter(x=>x.status==='pending'&&!x.incoming),fr=list.filter(x=>x.status==='accepted');
-  let h='<div><h3>Tu ID</h3><div class="fid"><b>'+rkEsc(frFmt(code))+'</b><button class="btn alt" id="frCopy" type="button">Copiar</button></div><p class="fmsg">Pasale este ID a quien quieras agregar.</p></div>';
+  const keep=$('#frIn')?$('#frIn').value:'',wasF=!!$('#frIn')&&document.activeElement===$('#frIn');
+  const box=$('#fbox'),inc=list.filter(x=>x.status==='pending'&&x.incoming),out=list.filter(x=>x.status==='pending'&&!x.incoming),fr=list.filter(x=>x.status==='accepted').sort((a,b)=>(b.online?1:0)-(a.online?1:0));
+  let h='<div><h3>Tu ID</h3><div class="fid"><b>'+rkEsc(frFmt(code))+'</b><button class="btn alt" id="frCopy" type="button">Copiar</button></div><p class="fmsg">Pasale este ID a quien quieras agregar.</p><label class="fvis"><input type="checkbox" id="frVis"'+(PRES.visible?' checked':'')+'> Mostrar a mis amigos cuando estoy en línea</label></div>';
   h+='<div><h3>Añadir amigos</h3><div class="fadd"><input id="frIn" maxlength="9" placeholder="ID DE TU AMIGO" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="ID de tu amigo"><button class="btn" id="frSend" type="button">Enviar</button></div><p class="fmsg" id="frMsg"></p></div>';
   if(inc.length)h+='<div><h3>Solicitudes ('+inc.length+')</h3>'+inc.map(x=>'<div class="frow"><span><b>'+rkEsc(x.name)+'</b> te envió una solicitud</span><button class="btn" data-a="acc" data-id="'+x.id+'" type="button">Aceptar</button><button class="btn alt" data-a="den" data-id="'+x.id+'" type="button">Denegar</button></div>').join('')+'</div>';
   if(out.length)h+='<div><h3>Enviadas</h3>'+out.map(x=>'<div class="frow"><span>'+rkEsc(x.name)+'<small>Esperando respuesta</small></span><button class="btn alt" data-a="del" data-id="'+x.id+'" type="button">Cancelar</button></div>').join('')+'</div>';
-  h+='<div><h3>Mis amigos ('+fr.length+')</h3>'+(fr.length?fr.map(x=>'<div class="frow"><span><b>'+rkEsc(x.name)+'</b><small>Nivel '+rkEsc(x.level)+' · ID '+rkEsc(frFmt(x.code))+'</small></span><button class="btn alt" data-a="del" data-id="'+x.id+'" type="button">Quitar</button></div>').join(''):'<p class="rnote">Todavía no tenés amigos. ¡Usá "Añadir amigos" con el ID de alguien!</p>')+'</div>';
+  h+='<div><h3>Mis amigos ('+fr.length+')</h3>'+(fr.length?fr.map(x=>'<div class="frow"><span><b>'+rkEsc(x.name)+'</b><small><i class="od'+(x.online?' on':'')+'"></i>'+(x.online?'En línea':'Desconectado')+' · Nivel '+rkEsc(x.level)+'</small></span><div class="acts"><button class="btn" data-a="inv" data-id="'+x.id+'" data-name="'+rkEsc(x.name)+'" type="button"'+(x.online?'':' disabled')+'>Invitar a sala</button><button class="btn alt" data-a="del" data-id="'+x.id+'" type="button">Quitar</button></div></div>').join(''):'<p class="rnote">Todavía no tenés amigos. ¡Usá "Añadir amigos" con el ID de alguien!</p>')+'</div>';
   box.innerHTML=h;
   const msg=(t,k)=>{const m=$('#frMsg');m.textContent=t;m.className='fmsg '+(k||'')};
   $('#frCopy').onclick=()=>{try{navigator.clipboard.writeText(code).then(()=>toast('ID copiado'),()=>toast('No se pudo copiar'))}catch(e){toast('No se pudo copiar')}};
-  const inp=$('#frIn');inp.oninput=()=>{inp.value=inp.value.toUpperCase().replace(/[^A-Z0-9-]/g,'')};
+  const inp=$('#frIn');if(keep){inp.value=keep;if(wasF)inp.focus()}
+  $('#frVis').onchange=async e=>{const v=e.target.checked;PRES.visible=v;try{await sb.rpc('presence_set_visible',{p_visible:v});toast(v?'Tus amigos te ven en línea':'Apareces desconectado')}catch(x){toast('No se pudo cambiar.')}};
+  inp.oninput=()=>{inp.value=inp.value.toUpperCase().replace(/[^A-Z0-9-]/g,'')};
   $('#frSend').onclick=async()=>{
     const v=inp.value.toUpperCase().replace(/[^A-Z0-9]/g,'');
     if(v.length!==8){msg('El ID tiene 8 letras y números.','bad');return}
@@ -3197,7 +3214,9 @@ function frDraw(code,list){
   };
   box.onclick=async e=>{
     const b=e.target.closest('button[data-a]');if(!b)return;
-    const id=Number(b.dataset.id),a=b.dataset.a;b.disabled=true;
+    const id=Number(b.dataset.id),a=b.dataset.a;
+    if(a==='inv'){lanClose();lanHost({id,name:b.dataset.name||'tu amigo'});return}
+    b.disabled=true;
     try{
       const r=a==='del'?await sb.rpc('friend_remove',{p_id:id}):await sb.rpc('friend_respond',{p_id:id,p_accept:a==='acc'});
       if(r.error)throw r.error;
@@ -3206,6 +3225,65 @@ function frDraw(code,list){
     }catch(x){toast('No se pudo completar. Probá de nuevo.');b.disabled=false}
   };
 }
+
+
+/* ---- invitar a un amigo a tu sala + estado "en línea" ---- */
+async function lanInvite(inv){
+  const n=NET;if(!n||!sb)return;
+  try{
+    const r=await sb.rpc('invite_send',{p_friendship:inv.id,p_room:n.code});
+    if(r.error)throw r.error;
+    if(NET!==n)return;
+    if(!r.data||!r.data.ok){
+      const t={too_fast:'Esperá unos segundos para volver a invitar.',not_friends:'Ya no son amigos.'}[r.data&&r.data.err]||'No se pudo enviar la invitación.';
+      n.invName='';lanView('wait');toast(t);return;
+    }
+    n.invId=r.data.id;
+    n.invTimer=setInterval(async()=>{
+      if(NET!==n||n.conn){clearInterval(n.invTimer);return}
+      try{
+        const s=await sb.rpc('invite_status',{p_id:n.invId});
+        if(NET!==n||n.conn)return;
+        if(s.data==='declined'){clearInterval(n.invTimer);toast(inv.name+' denegó la invitación');lanClose();lanView('start')}
+        else if(s.data==='expired'){clearInterval(n.invTimer);n.invName='';lanView('wait');toast('La invitación venció. El código sigue activo.')}
+      }catch(e){}
+    },3000);
+  }catch(e){if(NET===n){n.invName='';lanView('wait');toast('No se pudo enviar la invitación.')}}
+}
+var PRES={visible:true},invQ=[],invDone=new Set();
+function invBusy(){return !!NET||!$('#play').hidden||!$('#trivia').hidden||!$('#liga').hidden}
+function invShow(){
+  const bar=$('#invbar');if(!bar)return;
+  const i=(!invBusy()&&ME)?invQ.find(x=>!invDone.has(x.id)):null;
+  if(!i){bar.hidden=true;return}
+  bar.dataset.id=i.id;
+  $('#invTxt').innerHTML='<b>'+rkEsc(i.name)+'</b> te invitó a jugar';
+  bar.hidden=false;
+}
+async function invAnswer(yes){
+  const bar=$('#invbar'),id=Number(bar.dataset.id);
+  invDone.add(id);bar.hidden=true;
+  try{
+    const r=await sb.rpc('invite_respond',{p_id:id,p_accept:yes});
+    if(r.error)throw r.error;
+    if(!r.data||!r.data.ok){toast('La invitación ya venció.');invShow();return}
+    if(yes){lanClose();lanJoin(r.data.room)}else{toast('Invitación denegada');invShow()}
+  }catch(e){toast('No se pudo responder. Probá de nuevo.')}
+}
+$('#invYes').onclick=()=>invAnswer(true);
+$('#invNo').onclick=()=>invAnswer(false);
+async function presPing(){
+  if(!sb||!ME||document.hidden)return;
+  try{
+    const r=await sb.rpc('presence_ping');
+    if(r.error||!r.data)return;
+    PRES.visible=r.data.visible!==false;
+    invQ=r.data.invites||[];
+    invShow();
+    if(!$('#friends').hidden)renderFriends(true);
+  }catch(e){}
+}
+setInterval(presPing,6000);
 
 /* --- pantalla de ranking: una sola lista ordenada por XP --- */
 let rkTok=0;
