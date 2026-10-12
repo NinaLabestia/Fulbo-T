@@ -244,6 +244,7 @@ html{background:#0d2540}
 <style>
 /* ranking y cuenta */
 #auth .wbox input{text-transform:none;letter-spacing:0;font-size:17px;text-align:left;font-weight:600}
+#wmsg{min-height:1.4em;font-weight:700;font-size:14px;color:var(--bad);margin:0}
 #amsg{min-height:1.4em;font-weight:700;font-size:14px;color:var(--bad);margin:0}
 #amsg.ok{color:var(--good)}
 #wacc,#aswitch,#areset{justify-self:center}
@@ -464,6 +465,7 @@ html{background:#0d2540}
     <p id="wtext">¿Cómo te llamás? Tu nombre va en la camiseta de tu jugador.</p>
     <input id="wname" name="jugador" maxlength="12" placeholder="TU NOMBRE" aria-label="Tu nombre" autocapitalize="characters" spellcheck="false">
     <div class="wshirt">En tu camiseta<b id="wprev">—</b></div>
+    <p id="wmsg" role="alert"></p>
     <div class="wact"><button class="btn gold" id="wgo" type="submit" disabled>¡A jugar!</button><button class="btn alt" id="wcancel" type="button" hidden>Cancelar</button></div>
     <button class="ghost" id="wacc" type="button">Ya tengo cuenta</button>
   </form>
@@ -720,7 +722,7 @@ function wValue(){
 }
 function syncWelcome(){
   if(wMode==='num'){const i=$('#wname'),d=String(i.value).replace(/\D/g,'').slice(0,2);if(i.value!==d)i.value=d}
-  const n=wValue();$('#wgo').disabled=n.length<1;$('#wprev').textContent=n?n.toUpperCase():'—';
+  const n=wValue();{const wm=$('#wmsg');if(wm)wm.textContent=''}$('#wgo').disabled=n.length<1;$('#wprev').textContent=n?n.toUpperCase():'—';
 }
 function openWelcome(edit,done){
   const i=$('#wname');wMode=edit?'name':'welcome';wDone=done||null;
@@ -1925,9 +1927,32 @@ $('#quit').onclick=quitPlay;
 $('#tquit').onclick=()=>show('home');
 $('#snd').onclick=()=>{S.mute=!S.mute;save();refreshTop();if(S.mute)crowdStop();else if(G)crowdStart()};
 $('#wname').addEventListener('input',syncWelcome);
-$('#wform').addEventListener('submit',e=>{
+/* nombre único: el servidor dice si otro jugador ya usa ese nombre (no distingue mayúsculas; "messi" y "mess1" son distintos) */
+let nameBusy=false,clashShown=false;
+async function nameCheck(v){
+  if(!sb||!ME)return 'unknown';
+  try{const r=await sb.rpc('name_available',{p_name:v});if(r.error)return 'unknown';return r.data===false?'taken':'free'}catch(e){return 'unknown'}
+}
+function nameTakenErr(e){return !!e&&(e.code==='23505'||/duplicate key|unique/i.test(String(e.message||'')))}
+function nameClash(){
+  if(clashShown)return;clashShown=true;
+  const open=()=>{
+    if(!$('#welcome').hidden||!$('#auth').hidden){setTimeout(open,2500);return}
+    openWelcome(true,v=>{S.name=v;save();renderHome();toast('Nombre cambiado: '+v);clashShown=false;cloudQueue(true)});
+    $('#wtext').textContent='Ese nombre ya lo usa otro jugador. Elegí uno nuevo (no te cuesta nada).';
+  };
+  open();
+}
+$('#wform').addEventListener('submit',async e=>{
   e.preventDefault();
+  if(nameBusy)return;
   const v=wValue();if(!v)return;
+  if(wMode!=='num'){
+    nameBusy=true;const go=$('#wgo'),tx=go.textContent;go.disabled=true;go.textContent='Revisando…';
+    const st=await nameCheck(v);
+    nameBusy=false;go.textContent=tx;syncWelcome();
+    if(st==='taken'){$('#wmsg').textContent='Ese nombre ya está en uso. Elegí otro.';return}
+  }
   const cb=wDone;wDone=null;$('#welcome').hidden=true;
   if(cb){cb(v);return}
   if(wMode==='name'){
@@ -2193,7 +2218,7 @@ function draw(){
   }
   c.fillStyle='rgba(0,0,0,.25)';c.beginPath();c.ellipse(kx,yg-2,36*sk*(1-dive*.4+fall*1.1),5*sk*(1+fall*.4),0,0,7);c.fill();
   const kpz=keeperPose(G.time,dive,fall);kpz.rot=rot;
-  drawFront(c,kx,ky,sk,(G.mode==='liga'&&G.turn==='riv')?gkLook(S.eq.gk):KEEPER,kpz);
+  drawFront(c,kx,ky,sk,(G.mode==='liga'&&G.turn==='riv')?gkLook(S.eq.gk):((G.net&&G.rgk)?G.rgk:KEEPER),kpz);
   drawFrame(c,g);
   // pelota
   const kit=(G.mode==='liga'&&G.turn==='riv')?G.rkit:myKit(),ball=byId('ball',S.eq.ball);
@@ -2407,6 +2432,19 @@ function lanLoad(ok,bad){
   const e=document.createElement('script');e.src='https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js';
   e.onload=()=>lanIce(ok);e.onerror=bad;document.head.appendChild(e);
 }
+/* ropa online: se manda solo texto/números/booleanos (colores y estilos); lo que llega se limpia antes de usarlo */
+function lanPack(o){
+  const r={};if(!o||typeof o!=='object')return r;
+  for(const k in o){
+    if(!/^[A-Za-z0-9_]{1,12}$/.test(k))continue;
+    const v=o[k];
+    if(typeof v==='string'&&v.length<=40)r[k]=v;
+    else if(typeof v==='number'&&isFinite(v))r[k]=v;
+    else if(typeof v==='boolean')r[k]=v;
+    else if(Array.isArray(v)&&v.length<=4&&v.every(x=>typeof x==='string'&&x.length<=40))r[k]=v.slice();
+  }
+  return r;
+}
 function lanSend(m){try{if(NET&&NET.conn&&NET.conn.open)NET.conn.send(m)}catch(e){}}
 function lanClose(){
   if(!NET)return;const n=NET;NET=null;T=T&&T.on?null:T;
@@ -2441,14 +2479,14 @@ function lanJoin(code){
   },()=>lanFail('No se pudo cargar la conexión online. Revisá tu internet.'));
 }
 function lanWire(c){
-  const hi=()=>lanSend({t:'hello',name:S.name||'Jugador',kit:S.eq.kit});
+  const hi=()=>lanSend({t:'hello',name:S.name||'Jugador',kit:S.eq.kit,look:lanPack(myKit()),gk:lanPack(gkLook(S.eq.gk)),num:shirtNum()});
   c.open?hi():c.on('open',hi);
   c.on('data',lanMsg);
   c.on('close',()=>{if(NET&&NET.conn===c){lanClose();toast('Tu rival se desconectó');show('home')}});
 }
 function lanMsg(m){
   if(!NET||!m)return;
-  if(m.t==='hello'){NET.opp=String(m.name||'Rival').slice(0,12);NET.oppKit=m.kit;lanView('lobby')}
+  if(m.t==='hello'){NET.opp=String(m.name||'Rival').slice(0,12);NET.oppKit=m.kit;NET.oppLook=lanPack(m.look);NET.oppGk=lanPack(m.gk);NET.oppNum=String(m.num==null?'':m.num).replace(/[^0-9]/g,'').slice(0,2);lanView('lobby')}
   else if(m.t==='pstart')netStartMatch();
   else if(m.t==='shot')netOnShot(m);
   else if(m.t==='res'&&G&&G.net&&G.turn==='me'){G.res=true;G.outcome=m.o;G.kz=m.kz;if(G.phase==='hold'){G.phase='shot';G.t=0;beep(180,.12,'square',.05,200);setHint()}}
@@ -2719,7 +2757,10 @@ function netStartMatch(){
   LG={money:true,d:LIGA_D.dificil,online:true};show('play');
   G={mode:'liga',net:true,goal:GOALS.pen,kick:0,total:3,score:0,goals:0,streak:0,coins:0,time:0,parts:[],trail:[],ph:rnd(0,6),cheer:0,rt:0,
      rival:rid,sc:{me:0,riv:0},sh:{me:[],riv:[]},turn:NET.host?'me':'riv',round:1,
-     rkit:Object.assign({},byId('kit',rid),{skin:pick(SKINS),hair:pick(HAIRS),hs:pick(['clasico','largo','cubana','rock','pelado']),nm:NET.opp.toUpperCase().slice(0,8),digits:String(1+Math.floor(Math.random()*11))})};
+     rkit:NET.oppLook&&NET.oppLook.shirt
+       ?Object.assign({},byId('kit',rid),NET.oppLook,{nm:NET.opp.toUpperCase().slice(0,8),digits:NET.oppNum!==''&&NET.oppNum!=null?NET.oppNum:String(1+Math.floor(Math.random()*11))})
+       :Object.assign({},byId('kit',rid),{skin:pick(SKINS),hair:pick(HAIRS),hs:pick(['clasico','largo','cubana','rock','pelado']),nm:NET.opp.toUpperCase().slice(0,8),digits:String(1+Math.floor(Math.random()*11))}),
+     rgk:NET.oppGk&&NET.oppGk.shirt?NET.oppGk:null};
   NET.pend=null;$('#msg').className='msg';
   crowdStart();setTimeout(()=>whistle(false),250);
   ligaKick();
@@ -3083,7 +3124,7 @@ async function cloudSync(){
   syncing=(async()=>{
     try{
       const r=await sb.rpc('sync_progress',{p_name:name,p_xp:xp,p_best:best,p_goals:goals});
-      if(!r.error)lastSig=sig;
+      if(!r.error)lastSig=sig;else if(nameTakenErr(r.error))nameClash();
     }catch(e){}
   })();
   try{await syncing}finally{syncing=null}
