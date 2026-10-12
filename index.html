@@ -224,6 +224,59 @@ html,body{margin:0;min-height:100%;overscroll-behavior:none;-webkit-tap-highligh
 html{background:#0d2540}
 [hidden]{display:none!important}
 </style>
+<style>
+/* ranking y cuenta */
+#auth .wbox input{text-transform:none;letter-spacing:0;font-size:17px;text-align:left;font-weight:600}
+#amsg{min-height:1.4em;font-weight:700;font-size:14px;color:var(--bad);margin:0}
+#amsg.ok{color:var(--good)}
+#wacc,#aswitch,#areset{justify-self:center}
+.rk{padding:10px;gap:6px}
+.rrow{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:8px;background:var(--bg2);border:2px solid var(--line);border-radius:8px;padding:7px 10px;min-width:0}
+.rrow.mine{border-color:var(--sun);background:#2a2a14}
+.rrow .pos{font-family:var(--display);font-size:20px;color:var(--muted);text-align:center;font-variant-numeric:tabular-nums}
+.rrow .pos.p1{color:#ffc83d}
+.rrow .pos.p2{color:#d5dde8}
+.rrow .pos.p3{color:#d9955b}
+.rrow .nm{font-family:var(--display);font-size:18px;letter-spacing:.03em;text-transform:uppercase;line-height:1.1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rrow .nm small{display:block;font-family:var(--label);font-weight:700;font-size:12px;letter-spacing:.08em;color:var(--muted)}
+.rrow .val{font-family:var(--display);font-size:20px;color:var(--sun);font-variant-numeric:tabular-nums;text-align:right}
+.rgap{margin:0;text-align:center;color:var(--muted);line-height:1}
+.rnote{margin:0;text-align:center;color:var(--muted);padding:10px 6px;font-size:15px}
+.rnote .btn{margin-top:10px}
+</style>
+<style>
+.wrap{padding-bottom:76px}
+.me{grid-template-columns:84px 1fr}
+.av{width:84px;height:84px;border-radius:50%;overflow:hidden;border:3px solid var(--celeste)}
+.av canvas{width:100%;height:100%;object-fit:cover;border-radius:0}
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.qb{height:58px;font-size:18px;letter-spacing:.08em;position:relative;display:flex;align-items:center;justify-content:center;padding:0 12px;border-radius:14px}
+.feat{position:relative;overflow:hidden;text-align:left;min-height:150px;border-radius:20px;border:2px solid var(--line);background:linear-gradient(135deg,#1f5ca3,#12304f);padding:16px 18px;display:grid;align-content:space-between;gap:10px}
+.feat::after{content:"";position:absolute;right:-26px;top:-26px;width:130px;height:130px;border-radius:50%;background:#f4f8fd;box-shadow:inset 0 0 0 10px #0b1e33}
+.feat h3{font-family:var(--display);font-weight:400;font-size:34px;letter-spacing:.04em;text-transform:uppercase;line-height:1}
+.feat p{color:#cfe0f2;font-size:14px;max-width:190px}
+.feat .row{display:flex;align-items:center;gap:14px;position:relative;z-index:1}
+.feat em{font-style:normal;font-family:var(--label);font-weight:700;color:var(--sun);letter-spacing:.06em;text-transform:uppercase;font-size:14px}
+.mode{border-style:solid;border-radius:16px;min-height:84px;grid-template-columns:34px 1fr}
+.mode p{display:none}
+.mode em{grid-column:2;grid-row:2;text-align:left}
+.tabnav{position:fixed;left:0;right:0;bottom:0;z-index:20;padding-bottom:env(safe-area-inset-bottom,0px);height:calc(66px + env(safe-area-inset-bottom,0px));background:#0b1e33;border-top:2px solid var(--line);display:flex;justify-content:space-around;align-items:center}
+.tabnav button{display:grid;justify-items:center;gap:2px;font-family:var(--label);font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:none;border:0;padding:6px 14px}
+.tabnav button.on{color:var(--sun)}
+.rk{padding:0;background:none;border:0;gap:10px}
+.rcard{background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:10px 12px;display:grid;gap:8px}
+.rcard.mine{border-color:var(--sun);background:#2a2a14}
+.rhead{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:10px}
+.rhead .pos{font-family:var(--display);font-size:24px;text-align:center;color:var(--muted)}
+.rhead .pos.p1{color:#ffc83d}.rhead .pos.p2{color:#d5dde8}.rhead .pos.p3{color:#d9955b}
+.rhead .nm{font-family:var(--display);font-size:20px;letter-spacing:.03em;text-transform:uppercase;line-height:1.1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rhead .nm small,.rhead .xp small{display:block;font-family:var(--label);font-weight:700;font-size:12px;letter-spacing:.08em;color:var(--muted)}
+.rhead .xp{font-family:var(--display);font-size:22px;color:var(--sun);text-align:right;line-height:1.1}
+.rstats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.rstats div{background:var(--bg2);border-radius:8px;padding:5px 4px;text-align:center;min-width:0}
+.rstats b{display:block;font-family:var(--display);font-weight:400;font-size:18px}
+.rstats span{font-family:var(--label);font-weight:700;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+</style>
 </head>
 <body>
 <div id="intro" aria-hidden="true">
@@ -255,19 +308,18 @@ html{background:#0d2540}
   <div class="lvl"><span>Nivel <b id="lv">1</b></span><div class="bar"><i id="xp"></i></div><span id="xpt"></span></div>
 
   <section id="home" class="screen">
-    <button class="btn gold passbig" data-go="pass" id="passBtn">PASE ELITE</button>
     <div class="me">
-      <canvas id="meCv" width="240" height="260"></canvas>
+      <div class="av"><canvas id="meCv" width="240" height="260"></canvas></div>
       <div>
         <h2 id="meName">Tu jugador</h2>
         <p id="meInfo"></p>
-        <div class="row2"><button class="btn gold" data-go="shop">Tienda y mejoras</button><button class="ghost" id="chName">Cambiar nombre</button></div>
+        <div class="row2"><button class="ghost" id="chName">Cambiar nombre</button><button class="ghost" id="accBtn" type="button">Ingresar</button></div>
       </div>
     </div>
-    <h2 class="sec">En la cancha</h2>
+    <div class="quick"><button class="btn gold qb" data-go="pass" id="passBtn">PASE ELITE</button><button class="btn qb" data-go="rank" id="rankBtn">RANKING</button></div>
+    <h2 class="sec">Jugar</h2>
+    <button class="feat" id="featPen" type="button"></button>
     <div class="modes" id="modesA"></div>
-    <h2 class="sec">Sabelo todo</h2>
-    <div class="modes" id="modesB"></div>
   </section>
 
   <section id="play" class="screen" hidden>
@@ -322,7 +374,13 @@ html{background:#0d2540}
     <div class="tabbar"><button class="tarrow" id="tprev" type="button" aria-label="Ver categorías anteriores">&#8249;</button><div class="tabs" id="tabs" role="tablist"></div><button class="tarrow nudge" id="tnext" type="button" aria-label="Ver más categorías">&#8250;</button></div>
     <div class="items" id="items"></div>
   </section>
+
+  <section id="rank" class="screen" hidden>
+    <div class="bar-top"><button class="ghost" data-go="home">Volver</button><h2 class="sec">Ranking</h2></div>
+    <div class="card rk" id="rbox"></div>
+  </section>
 </div>
+<nav class="tabnav" id="nav" hidden><button type="button" data-go="home"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8v9H3z"/></svg>Inicio</button><button type="button" data-go="rank"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-7"/></svg>Ranking</button><button type="button" data-go="pass"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>Pase</button><button type="button" data-go="shop"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6zM9 8a3 3 0 016 0"/></svg>Tienda</button></nav>
 <div class="toast" id="toast" role="status"></div>
 <div class="welcome" id="welcome" hidden>
   <form class="wbox" id="wform" autocomplete="off">
@@ -331,6 +389,20 @@ html{background:#0d2540}
     <input id="wname" name="jugador" maxlength="12" placeholder="TU NOMBRE" aria-label="Tu nombre" autocapitalize="characters" spellcheck="false">
     <div class="wshirt">En tu camiseta<b id="wprev">—</b></div>
     <div class="wact"><button class="btn gold" id="wgo" type="submit" disabled>¡A jugar!</button><button class="btn alt" id="wcancel" type="button" hidden>Cancelar</button></div>
+    <button class="ghost" id="wacc" type="button">Ya tengo cuenta</button>
+  </form>
+</div>
+
+<div class="welcome" id="auth" hidden>
+  <form class="wbox" id="aform" novalidate>
+    <h2 id="atitle">Ingresar</h2>
+    <p id="atext"></p>
+    <input id="aemail" type="email" name="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" placeholder="correo@ejemplo.com" aria-label="Correo electrónico">
+    <input id="apass" type="password" name="password" autocomplete="current-password" placeholder="Contraseña" aria-label="Contraseña">
+    <p id="amsg" role="alert"></p>
+    <div class="wact"><button class="btn gold" id="ago" type="submit">Ingresar</button><button class="btn alt" id="acancel" type="button">Cerrar</button></div>
+    <button class="ghost" id="aswitch" type="button"></button>
+    <button class="ghost" id="areset" type="button">Olvidé mi contraseña</button>
   </form>
 </div>
 
@@ -343,6 +415,7 @@ html{background:#0d2540}
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
 (function(){'use strict';
 
@@ -495,11 +568,11 @@ const NAME_POOL=PLAYERS.map(p=>p.n).concat(EXTRA_NAMES);
 
 /* ---------- estado guardado ---------- */
 const KEY='potrero-pro-v1';
-const defaults=()=>({coins:40,xp:0,owned:{kit:['celeste'],ball:['clasica'],stadium:['potrero'],fest:['confeti'],trail:['ninguna'],num:['0'],cut:['clasico'],hc:['negro']},eq:{kit:'celeste',ball:'clasica',stadium:'potrero',fest:'confeti',trail:'ninguna',num:'0',cut:'clasico',hc:'negro'},up:{prec:0,pow:0,curve:0},best:{pen:0,fk:0,clubs:0,stats:0,quotes:0,liga:0},goals:0,mute:false,name:'',nameFree:NAME_FREE,nameTokens:0,pass:{claimed:[],ref:false,refOwned:[],refEq:'amarillo'},daily:{last:'',streak:0}});
+const defaults=()=>({coins:40,xp:0,owned:{kit:['celeste'],ball:['clasica'],stadium:['potrero'],fest:['confeti'],trail:['ninguna'],num:['0'],cut:['clasico'],hc:['negro']},eq:{kit:'celeste',ball:'clasica',stadium:'potrero',fest:'confeti',trail:'ninguna',num:'0',cut:'clasico',hc:'negro'},up:{prec:0,pow:0,curve:0},best:{pen:0,fk:0,clubs:0,stats:0,quotes:0,liga:0},gm:{pen:0,fk:0},goals:0,mute:false,name:'',nameFree:NAME_FREE,nameTokens:0,pass:{claimed:[],ref:false,refOwned:[],refEq:'amarillo'},daily:{last:'',streak:0}});
 function merge(a,b){for(const k in b){if(b[k]&&typeof b[k]==='object'&&!Array.isArray(b[k])&&a[k]&&typeof a[k]==='object')merge(a[k],b[k]);else a[k]=b[k]}return a}
 function load(){try{const r=localStorage.getItem(KEY);if(r)return merge(defaults(),JSON.parse(r))}catch(e){}return defaults()}
 let S=load();
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}try{cloudQueue()}catch(e){}}
 const lvl=()=>1+Math.floor(Math.sqrt(S.xp/10));
 function give(points,coins){const b=lvl();S.xp+=Math.round(points/2);S.coins+=coins;const a=lvl();let bonus=0;if(a>b){bonus=20*(a-b);S.coins+=bonus}save();refreshTop();return{up:a>b,level:a,bonus}}
 function refreshTop(){
@@ -532,7 +605,7 @@ function openWelcome(edit,done){
   $('#wtitle').textContent=edit?'Cambiar nombre':'¡Bienvenido a Fulbo Trivial!';
   $('#wtext').textContent=edit?'Escribí el nombre que va en tu camiseta.':'¿Cómo te llamás? Tu nombre va en la camiseta de tu jugador.';
   $('#wgo').textContent=edit?'Guardar':'¡A jugar!';
-  $('#wcancel').hidden=!edit;
+  $('#wcancel').hidden=!edit;$('#wacc').hidden=!!edit;
   i.value=edit?(S.name||''):'';syncWelcome();$('#welcome').hidden=false;
 }
 function openNumber(done){
@@ -540,7 +613,7 @@ function openNumber(done){
   i.maxLength=2;i.inputMode='numeric';i.placeholder='10';
   $('#wtitle').textContent='Cambiar número';
   $('#wtext').textContent='Elegí un número de hasta 2 dígitos. Por ejemplo 10, 1 o 99.';
-  $('#wgo').textContent='Guardar';$('#wcancel').hidden=false;
+  $('#wgo').textContent='Guardar';$('#wcancel').hidden=false;$('#wacc').hidden=true;
   i.value=shirtNum();syncWelcome();$('#welcome').hidden=false;
 }
 
@@ -1633,6 +1706,8 @@ function show(id){
   if(id==='home')renderHome();
   if(id==='shop')renderShop(shopTab);
   if(id==='pass')renderPass();
+  if(id==='rank')renderRank();
+  $('#nav').hidden=!['home','rank','pass','shop'].includes(id);document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.go===id));
   window.scrollTo(0,0);
 }
 function stopGame(){cancelAnimationFrame(raf);G=null;crowdStop()}
@@ -1658,15 +1733,16 @@ const MODES=[
  {id:'quotes',group:'B',name:'Por frases',desc:'¿Quién dijo esta frase?'}
 ];
 function renderHome(){
-  for(const g of['A','B']){
-    const box=$('#modes'+g);box.innerHTML='';
-    MODES.filter(m=>m.group===g).forEach(m=>{
+  {
+    const box=$('#modesA');box.innerHTML='';
+    MODES.filter(m=>m.id!=='pen').forEach(m=>{
       const b=document.createElement('button');b.className='mode';
       b.innerHTML=ICON[m.id]+'<h3>'+m.name+'</h3><p>'+m.desc+'</p><em>'+(m.id==='lan'?'2 jugadores':(m.id==='liga'?'Copas ':'Récord ')+S.best[m.id])+'</em>';
       b.onclick=()=>m.id==='lan'?lanOpen():m.id==='liga'?ligaOpen():m.group==='A'?startGame(m.id):startTrivia(m.id);
       box.appendChild(b);
     });
   }
+  const ft=$('#featPen');ft.innerHTML='<h3>Penales</h3><p>Tanda de 5. Mirá la mira y definí.</p><div class="row"><span class="btn gold">Jugar</span><em>Récord '+S.best.pen+'</em></div>';ft.onclick=()=>startGame('pen');
   $('#meName').textContent=S.name||'Tu jugador';
   $('#meInfo').textContent='Nivel '+lvl()+' · '+S.goals+' goles en tu carrera';
   $('#chName').textContent=S.nameFree>0?'Cambiar nombre ('+S.nameFree+' gratis)':S.nameTokens>0?'Cambiar nombre ('+S.nameTokens+')':'Cambiar nombre';
@@ -1805,7 +1881,7 @@ function finishShot(){
   const o=G.outcome,fk=!G.goal.pen;let msg,cls,pts=0,co=0;
   if(G.kz&&G.kp>0)G.fall=.001;
   if(o==='goal'){
-    G.goals++;G.streak++;S.goals++;
+    G.goals++;G.streak++;S.goals++;S.gm[G.mode]=(S.gm[G.mode]||0)+1;
     pts=100+(G.ang?50:0)+(fk?50:0)+Math.min(G.streak-1,5)*10;co=25;
     msg=G.ang?'¡Al ángulo!':'¡Gol!';cls=G.ang?'gold':'good';fest(G.parts,S.eq.fest);G.cheer=2.4;sGoal(G.ang);
   }else{
@@ -2738,6 +2814,193 @@ function claimReward(rw){
   if(S.owned[rw.t].includes(rw.id)){S.coins+=it.price;fin('Ya lo tenías: +'+it.price+' monedas')}
   else{S.owned[rw.t].push(rw.id);fin('Desbloqueaste: '+it.name+' (equipalo en la Tienda)')}
 }
+
+/* ---------- CUENTA Y RANKING (Supabase) ---------- */
+/* La URL y la clave "publishable" son públicas por diseño: la seguridad real está en las reglas (RLS) de la base. */
+var SB_URL='https://rgppvdgetqnucucrjngn.supabase.co';
+var SB_KEY='sb_publishable_jnNOZ-5qZUZVWZq2xyK30g_wSuCR2mQ';
+var sb=null,ME=null,cqT=0,lastSig='',syncing=null,pulledFor='';
+try{if(window.supabase&&window.supabase.createClient)sb=window.supabase.createClient(SB_URL,SB_KEY)}catch(e){sb=null}
+const BEST_KEYS=['pen','fk','clubs','stats','quotes','liga'];
+const RANK_TABS=[['xp','Nivel'],['pen','Penales'],['fk','Tiros libres'],['clubs','Por clubes'],['stats','Por datos'],['quotes','Por frases'],['liga','Copas']];
+const redirectUrl=()=>location.protocol.indexOf('http')===0?location.origin+location.pathname:undefined;
+const rkEsc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* --- sincronización: sube nombre, XP y récords; el servidor solo acepta valores que suben --- */
+function cloudQueue(now){
+  if(!sb||!ME)return;
+  clearTimeout(cqT);
+  cqT=setTimeout(cloudSync,now?0:2500);
+}
+async function cloudSync(){
+  if(!sb||!ME||!S.name)return;
+  if(syncing){try{await syncing}catch(e){}}
+  const best={};
+  BEST_KEYS.forEach(k=>{const v=Math.floor(Number(S.best[k])||0);if(v>0)best[k]=v});
+  const xp=Math.floor(Number(S.xp)||0),name=S.name,goals={pen:Math.floor(Number(S.gm&&S.gm.pen)||0),fk:Math.floor(Number(S.gm&&S.gm.fk)||0)};
+  const sig=ME.id+'|'+name+'|'+xp+'|'+JSON.stringify(best)+JSON.stringify(goals);
+  if(sig===lastSig)return;
+  syncing=(async()=>{
+    try{
+      const r=await sb.rpc('sync_progress',{p_name:name,p_xp:xp,p_best:best,p_goals:goals});
+      if(!r.error)lastSig=sig;
+    }catch(e){}
+  })();
+  try{await syncing}finally{syncing=null}
+}
+async function cloudFlush(){clearTimeout(cqT);await cloudSync()}
+
+/* --- al entrar: trae lo guardado en la nube y se queda con lo mejor de cada lado --- */
+async function cloudPull(){
+  if(!sb||!ME)return;
+  try{
+    const [p,s]=await Promise.all([
+      sb.from('profiles').select('name,xp,goals_pen,goals_fk').eq('id',ME.id).maybeSingle(),
+      sb.from('scores').select('mode,score').eq('user_id',ME.id)
+    ]);
+    let ch=false,gotName=false;
+    if(p.data){
+      if(!S.name&&p.data.name){S.name=p.data.name;ch=true;gotName=true}
+      if(p.data.xp>S.xp){S.xp=p.data.xp;ch=true}if(p.data.goals_pen>(S.gm.pen||0)){S.gm.pen=p.data.goals_pen;ch=true}if(p.data.goals_fk>(S.gm.fk||0)){S.gm.fk=p.data.goals_fk;ch=true}
+    }
+    (s.data||[]).forEach(r=>{if(BEST_KEYS.includes(r.mode)&&r.score>(Number(S.best[r.mode])||0)){S.best[r.mode]=r.score;ch=true}});
+    if(ch){save();refreshTop();if(!$('#home').hidden)renderHome()}
+    if(gotName)setTimeout(checkDaily,1200);
+  }catch(e){}
+  if(!S.name&&$('#welcome').hidden&&$('#auth').hidden)openWelcome(false);
+  cloudQueue(true);
+}
+
+/* --- ventana de cuenta --- */
+let aMode='login',aFromWelcome=false;
+function aMsg(t,ok){const m=$('#amsg');m.textContent=t||'';m.className=ok?'ok':''}
+function authErr(e){
+  const m=String(e&&e.message||'').toLowerCase(),c=String(e&&e.code||'');
+  if(m.includes('invalid login')||c==='invalid_credentials')return 'Correo o contraseña incorrectos.';
+  if(m.includes('not confirmed')||c==='email_not_confirmed')return 'Todavía no confirmaste tu correo. Revisá tu bandeja (y el spam).';
+  if(m.includes('already registered')||c==='user_already_exists')return 'Ese correo ya está registrado. Probá ingresar.';
+  if(c==='over_email_send_rate_limit'||m.includes('rate limit')||(e&&e.status===429))return 'Demasiados intentos. Esperá unos minutos y probá de nuevo.';
+  if(c==='same_password'||m.includes('different from the old'))return 'La nueva contraseña tiene que ser distinta a la anterior.';
+  if(c==='weak_password'||(m.includes('password')&&(m.includes('weak')||m.includes('least'))))return 'La contraseña es muy débil. Probá con otra más larga.';
+  if(m.includes('fetch')||m.includes('network'))return 'No hay conexión. Probá de nuevo.';
+  return 'No se pudo completar. Probá de nuevo.';
+}
+function openAuth(mode,fromWelcome){
+  if(!sb){toast('No se pudo conectar con el servidor. Probá de nuevo más tarde.');return}
+  aMode=mode;aFromWelcome=!!fromWelcome;
+  const cfg={
+    login:['Ingresar','Entrá para aparecer en el ranking y guardar tu progreso.','Ingresar','No tengo cuenta · Crear una'],
+    signup:['Crear cuenta','Registrate con tu correo para competir en el ranking.','Crear cuenta','Ya tengo cuenta · Ingresar'],
+    reset:['Recuperar contraseña','Te mandamos un enlace a tu correo para elegir una nueva.','Enviar enlace','Volver a ingresar'],
+    newpass:['Nueva contraseña','Elegí tu nueva contraseña (mínimo 6 caracteres).','Guardar',''],
+    account:['Tu cuenta','Sesión iniciada con '+(ME?ME.email:''),'Cerrar sesión','']
+  }[mode];
+  $('#atitle').textContent=cfg[0];$('#atext').textContent=cfg[1];$('#ago').textContent=cfg[2];
+  $('#aswitch').textContent=cfg[3];$('#aswitch').hidden=!cfg[3];
+  $('#areset').hidden=mode!=='login';
+  $('#aemail').hidden=!(mode==='login'||mode==='signup'||mode==='reset');
+  $('#apass').hidden=!(mode==='login'||mode==='signup'||mode==='newpass');
+  $('#apass').autocomplete=mode==='login'?'current-password':'new-password';
+  $('#apass').value='';aMsg('');
+  $('#auth').hidden=false;
+  if(!$('#aemail').hidden&&!$('#aemail').value)setTimeout(()=>$('#aemail').focus(),50);
+}
+function closeAuth(){
+  $('#auth').hidden=true;$('#apass').value='';
+  if(aFromWelcome&&!S.name&&!ME)openWelcome(false);
+  aFromWelcome=false;
+}
+$('#acancel').onclick=closeAuth;
+$('#aswitch').onclick=()=>openAuth(aMode==='login'?'signup':'login',aFromWelcome);
+$('#areset').onclick=()=>openAuth('reset',aFromWelcome);
+$('#accBtn').onclick=()=>openAuth(ME?'account':'login',false);
+$('#wacc').onclick=()=>{$('#welcome').hidden=true;openAuth('login',true)};
+$('#aform').addEventListener('submit',async e=>{
+  e.preventDefault();
+  if(!sb)return;
+  const email=$('#aemail').value.trim(),pass=$('#apass').value,go=$('#ago');
+  if(aMode==='account'){
+    go.disabled=true;
+    try{await sb.auth.signOut()}catch(x){}
+    go.disabled=false;$('#auth').hidden=true;toast('Sesión cerrada');return;
+  }
+  if(aMode!=='newpass'&&!/^\S+@\S+\.\S+$/.test(email)){aMsg('Escribí un correo válido.');return}
+  if(aMode!=='reset'&&pass.length<6){aMsg('La contraseña debe tener al menos 6 caracteres.');return}
+  go.disabled=true;aMsg('Un momento…',true);
+  try{
+    if(aMode==='login'){
+      const r=await sb.auth.signInWithPassword({email,password:pass});
+      if(r.error){aMsg(authErr(r.error));return}
+      aFromWelcome=false;$('#auth').hidden=true;$('#apass').value='';toast('¡Listo! Ya estás adentro');
+    }else if(aMode==='signup'){
+      const r=await sb.auth.signUp({email,password:pass,options:{emailRedirectTo:redirectUrl()}});
+      if(r.error){aMsg(authErr(r.error));return}
+      if(r.data&&r.data.user&&r.data.user.identities&&r.data.user.identities.length===0){aMsg('Ese correo ya está registrado. Probá ingresar.');return}
+      if(r.data&&r.data.session){aFromWelcome=false;$('#auth').hidden=true;$('#apass').value='';toast('¡Cuenta creada!')}
+      else{openAuth('login',aFromWelcome);aMsg('Te enviamos un correo: confirmalo y después ingresá.',true)}
+    }else if(aMode==='reset'){
+      const r=await sb.auth.resetPasswordForEmail(email,{redirectTo:redirectUrl()});
+      if(r.error){aMsg(authErr(r.error));return}
+      aMsg('Si el correo existe, te mandamos un enlace para cambiar la contraseña.',true);
+    }else if(aMode==='newpass'){
+      const r=await sb.auth.updateUser({password:pass});
+      if(r.error){aMsg(authErr(r.error));return}
+      $('#auth').hidden=true;$('#apass').value='';toast('Contraseña cambiada');
+    }
+  }catch(x){aMsg('No hay conexión. Probá de nuevo.')}
+  finally{go.disabled=false}
+});
+function refreshAcc(){$('#accBtn').textContent=ME?'Mi cuenta':'Ingresar'}
+if(sb){
+  sb.auth.onAuthStateChange((ev,sess)=>{
+    ME=sess&&sess.user?sess.user:null;
+    refreshAcc();
+    if(ev==='PASSWORD_RECOVERY'){setTimeout(()=>openAuth('newpass',false),0);return}
+    if(ME&&pulledFor!==ME.id){pulledFor=ME.id;setTimeout(cloudPull,0)}
+    if(!ME){pulledFor='';lastSig=''}
+  });
+}
+
+/* --- pantalla de ranking: una sola lista ordenada por XP --- */
+let rkTok=0;
+function renderRank(){loadRank()}
+function rkCell(v,l){return '<div><b>'+(Number(v)||0)+'</b><span>'+l+'</span></div>'}
+function rkCard(pos,r,mine){
+  const m=r.m||{},medal=pos<=3?' p'+pos:'';
+  return '<div class="rcard'+(mine?' mine':'')+'"><div class="rhead"><span class="pos'+medal+'">'+pos+'</span>'
+    +'<span class="nm">'+rkEsc(r.name||'Jugador')+'<small>Nivel '+rkEsc(r.level)+'</small></span>'
+    +'<span class="xp">'+rkEsc(r.xp)+'<small>XP</small></span></div>'
+    +'<div class="rstats">'+rkCell(r.gp,'Goles penales')+rkCell(r.gf,'Goles tiros libres')+rkCell(m.liga,'Copas')
+    +rkCell(m.clubs,'Pts clubes')+rkCell(m.stats,'Pts datos')+rkCell(m.quotes,'Pts frases')+'</div></div>';
+}
+async function loadRank(){
+  const box=$('#rbox'),tok=++rkTok;
+  if(!sb){box.innerHTML='<p class="rnote">No se pudo conectar con el servidor del ranking.</p>';return}
+  box.innerHTML='<p class="rnote">Cargando…</p>';
+  try{
+    await cloudFlush();
+    const r=await sb.from('profiles').select('id,name,xp,level,goals_pen,goals_fk,scores(mode,score)').gt('xp',0).order('xp',{ascending:false}).order('updated_at',{ascending:true}).limit(50);
+    if(r.error)throw r.error;
+    const rows=(r.data||[]).map(x=>{const m={};(x.scores||[]).forEach(s=>{m[s.mode]=s.score});return{id:x.id,name:x.name,xp:x.xp,level:x.level,gp:x.goals_pen,gf:x.goals_fk,m}});
+    const myXp=Math.floor(Number(S.xp)||0);
+    let below='';
+    if(ME&&myXp>0&&rows.length>=50&&!rows.some(x=>x.id===ME.id)){
+      const c=await sb.from('profiles').select('id',{count:'exact',head:true}).gt('xp',myXp);
+      if(!c.error&&c.count!=null)below='<p class="rgap">· · ·</p>'+rkCard(c.count+1,{name:S.name,xp:myXp,level:lvl(),gp:S.gm.pen,gf:S.gm.fk,m:S.best},true);
+    }
+    if(tok!==rkTok)return;
+    let html='';
+    if(!ME)html+='<div class="rnote">Ingresá para aparecer en el ranking.<br><button class="btn" id="rkLogin" type="button">Ingresar o crear cuenta</button></div>';
+    html+=rows.length?rows.map((x,i)=>rkCard(i+1,x,ME&&x.id===ME.id)).join('')+below:'<p class="rnote">Todavía no hay nadie en el ranking. ¡Sé el primero!</p>';
+    box.innerHTML=html;
+    const lb=$('#rkLogin');if(lb)lb.onclick=()=>openAuth('login',false);
+  }catch(e){
+    if(tok!==rkTok)return;
+    box.innerHTML='<p class="rnote">No se pudo cargar el ranking. Revisá tu conexión y volvé a intentar.</p><div class="actions"><button class="btn" id="rkRetry" type="button">Reintentar</button></div>';
+    $('#rkRetry').onclick=loadRank;
+  }
+}
+refreshAcc();
 
 /* ---------- arranque ---------- */
 refreshTop();show('home');
