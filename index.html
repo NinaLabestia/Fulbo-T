@@ -248,7 +248,9 @@ html{background:#0d2540}
 .ghost.red:hover{color:var(--bad);border-color:var(--bad);background:rgba(239,90,95,.1)}
 .btn.danger{background:var(--bad);color:var(--ink);box-shadow:0 3px 0 #a93a3e}
 .plink{justify-self:center;font-family:var(--label);font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--celeste);text-decoration:underline}
-#wmsg{min-height:1.4em;font-weight:700;font-size:14px;color:var(--bad);margin:0}
+#wmsg,#repmsg{min-height:1.4em;font-weight:700;font-size:14px;color:var(--bad);margin:0}
+.rrep{justify-self:end;background:none;border:0;color:var(--muted);font-family:var(--label);font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:2px 4px;text-decoration:underline}
+.rrep:hover{color:var(--fg)}
 #amsg{min-height:1.4em;font-weight:700;font-size:14px;color:var(--bad);margin:0}
 #amsg.ok{color:var(--good)}
 #wacc,#aswitch,#areset{justify-self:center}
@@ -488,6 +490,18 @@ html{background:#0d2540}
     <button class="ghost red" id="adel" type="button" hidden>Eliminar cuenta</button>
     <a class="plink" id="apriv" href="privacidad.html" target="_blank" rel="noopener">Política de privacidad</a>
   </form>
+</div>
+
+<div class="welcome" id="rep" hidden>
+  <div class="wbox">
+    <h2 id="reptitle">Reportar jugador</h2>
+    <p>¿Qué pasó?</p>
+    <button class="btn alt" data-r="nombre" type="button">Nombre ofensivo</button>
+    <button class="btn alt" data-r="trampa" type="button">Hace trampa</button>
+    <button class="btn alt" data-r="otro" type="button">Otro motivo</button>
+    <p id="repmsg" role="alert"></p>
+    <button class="btn alt" id="repcancel" type="button">Cancelar</button>
+  </div>
 </div>
 
 <div class="welcome" id="daily" hidden>
@@ -1934,6 +1948,26 @@ $('#tquit').onclick=()=>show('home');
 $('#snd').onclick=()=>{S.mute=!S.mute;save();refreshTop();if(S.mute)crowdStop();else if(G)crowdStart()};
 $('#wname').addEventListener('input',syncWelcome);
 /* nombre único: el servidor dice si otro jugador ya usa ese nombre (no distingue mayúsculas; "messi" y "mess1" son distintos) */
+/* filtro de nombres: detecta insultos aunque cambien letras por números, repitan letras o separen con signos */
+const NB_LEET={'0':'o','1':'i','3':'e','4':'a','5':'s','7':'t','8':'b','@':'a','$':'s','!':'i'};
+const NB_STRONG=['hijodeputa','hijueputa','hijoputa','mierda','culiado','culiao','chupapija','chupala','putita','pedofil','violador','sidoso','mongolico','mogolico','maricon','sorete','hitler','conchudo','conchetumare','conchatumadre','fuck','nigger','nigga','faggot','whore','bitch'];
+const NB_EXACT=['puta','puto','pija','verga','concha','orto','hdp','ctm','csm','nazi','trolo','trola','culo','teta','tetas','sexo','porno','pene','vagina','zorra','perra','coger','cogido','garcha','garchar','garche','chota','poronga','pajero','pajera','slut','cunt','shit','dick','cock','rape','porn','sex','anal'];
+const nbSimp=t=>t.replace(/(.)\1+/g,'$1');
+function nbNorm(t,leet){
+  t=String(t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  if(leet)t=t.replace(/[0134578@$!]/g,c=>NB_LEET[c]);
+  return t;
+}
+function nameBad(name){
+  for(const leet of [true,false]){
+    const base=nbNorm(name,leet);
+    const toks=base.split(/[^a-z]+/).filter(Boolean).map(nbSimp);
+    const joined=nbSimp(base.replace(/[^a-z]/g,''));
+    if(NB_STRONG.some(w=>joined.includes(nbSimp(w))))return true;
+    if(NB_EXACT.some(w=>{const x=nbSimp(w);return joined===x||toks.includes(x)}))return true;
+  }
+  return false;
+}
 let nameBusy=false,clashShown=false;
 async function nameCheck(v){
   if(!sb||!ME)return 'unknown';
@@ -1953,6 +1987,7 @@ $('#wform').addEventListener('submit',async e=>{
   e.preventDefault();
   if(nameBusy)return;
   const v=wValue();if(!v)return;
+  if(wMode!=='num'&&nameBad(v)){syncWelcome();$('#wmsg').textContent='Ese nombre no está permitido. Elegí otro.';return}
   if(wMode!=='num'){
     nameBusy=true;const go=$('#wgo'),tx=go.textContent;go.disabled=true;go.textContent='Revisando…';
     const st=await nameCheck(v);
@@ -2537,7 +2572,8 @@ function lanView(v,t){
        +'<button class="lgopt alt" id="lanM_stats"><b>Por datos</b><span>Récords y hazañas.</span></button>'
        +'<button class="lgopt alt" id="lanM_quotes"><b>Por frases</b><span>¿Quién dijo esta frase?</span></button>'
       :'<p class="lgsub">Esperando que '+NET.opp+' elija el modo de juego…</p>')
-     +'<div class="actions"><button class="btn alt" id="lanHome">Salir</button></div>';
+     +'<div class="actions"><button class="btn alt" id="lanRep">Reportar</button><button class="btn alt" id="lanHome">Salir</button></div>';
+    go('lanRep',()=>openReport(NET.opp,'online'));
     if(host){['clubs','stats','quotes'].forEach(k=>go('lanM_'+k,()=>lanPlay(k)));go('lanM_pen',()=>{lanSend({t:'pstart'});netStartMatch()})}
     go('lanHome',()=>show('home'));
   }
@@ -3366,7 +3402,7 @@ function frDraw(code,list){
   h+='<div class="igid"><div><b>'+rkEsc(S.name||'Tu jugador')+'</b><small>@'+rkEsc(frFmt(code))+'</small></div><div class="igact"><button class="igb" id="frCopy" type="button">'+FR_IC.copy+'Copiar ID</button><button class="igb ico" id="frShare" type="button" aria-label="Compartir mi ID">'+FR_IC.share+'</button></div></div>';
   h+='<div class="igtabs" role="tablist"><button type="button" role="tab" data-tab="friends" aria-selected="'+(tab==='friends')+'">'+FR_IC.users+'Amigos</button><button type="button" role="tab" data-tab="req" aria-selected="'+(tab==='req')+'">'+FR_IC.bell+'Solicitudes'+(inc.length?'<span class="igbadge">'+inc.length+'</span>':'')+'</button><button type="button" role="tab" data-tab="add" aria-selected="'+(tab==='add')+'">'+FR_IC.add+'Añadir</button></div>';
   if(tab==='friends'){
-    h+=fr.length?fr.map(x=>'<div class="igrow"><div class="igav sm">'+pfInner(x.avatar,x.name)+'<i class="igon'+(x.online?' on':'')+'"></i></div><div class="igin"><b>'+rkEsc(x.name)+'</b><small>'+(x.online?'En línea':'Desconectado')+' · Nivel '+rkEsc(x.level)+'</small></div><button class="igtxt" data-a="inv" data-id="'+x.id+'" data-name="'+rkEsc(x.name)+'" type="button"'+(x.online?'':' disabled')+'>Invitar a sala</button><button class="igx" data-a="del" data-id="'+x.id+'" type="button" aria-label="Quitar a '+rkEsc(x.name)+'">&#10005;</button></div>').join(''):'<p class="rnote">Todavía no tenés amigos. Pasá a "Añadir" y escribí el ID de alguien.</p>';
+    h+=fr.length?fr.map(x=>'<div class="igrow"><div class="igav sm">'+pfInner(x.avatar,x.name)+'<i class="igon'+(x.online?' on':'')+'"></i></div><div class="igin"><b>'+rkEsc(x.name)+'</b><small>'+(x.online?'En línea':'Desconectado')+' · Nivel '+rkEsc(x.level)+'</small></div><button class="igtxt" data-a="inv" data-id="'+x.id+'" data-name="'+rkEsc(x.name)+'" type="button"'+(x.online?'':' disabled')+'>Invitar a sala</button><button class="igx" data-a="rep" data-name="'+rkEsc(x.name)+'" type="button" aria-label="Reportar a '+rkEsc(x.name)+'">&#9873;</button><button class="igx" data-a="del" data-id="'+x.id+'" type="button" aria-label="Quitar a '+rkEsc(x.name)+'">&#10005;</button></div>').join(''):'<p class="rnote">Todavía no tenés amigos. Pasá a "Añadir" y escribí el ID de alguien.</p>';
   }else if(tab==='req'){
     h+=inc.length?inc.map(x=>'<div class="igrow"><div class="igav sm">'+pfInner(x.avatar,x.name)+'</div><div class="igin"><b>'+rkEsc(x.name)+'</b><small>Quiere ser tu amigo</small></div><button class="igtxt" data-a="acc" data-id="'+x.id+'" type="button">Aceptar</button><button class="igtxt mute" data-a="den" data-id="'+x.id+'" type="button">Denegar</button></div>').join(''):'<p class="rnote">No tenés solicitudes nuevas.</p>';
     if(out.length)h+='<h4 class="igsub">Enviadas</h4>'+out.map(x=>'<div class="igrow"><div class="igav sm">'+pfInner(x.avatar,x.name)+'</div><div class="igin"><b>'+rkEsc(x.name)+'</b><small>Esperando respuesta</small></div><button class="igtxt mute" data-a="del" data-id="'+x.id+'" type="button">Cancelar</button></div>').join('');
@@ -3406,6 +3442,7 @@ function frDraw(code,list){
   box.onclick=async e=>{
     const b=e.target.closest('button[data-a]');if(!b)return;
     const id=Number(b.dataset.id),a=b.dataset.a;
+    if(a==='rep'){openReport(b.dataset.name,'amigos');return}
     if(a==='inv'){lanClose();lanHost({id,name:b.dataset.name||'tu amigo'});return}
     b.disabled=true;
     try{
@@ -3480,13 +3517,36 @@ setInterval(presPing,6000);
 let rkTok=0;
 function renderRank(){loadRank()}
 function rkCell(v,l){return '<div><b>'+(Number(v)||0)+'</b><span>'+l+'</span></div>'}
+/* reportar jugadores: el servidor guarda el reporte y limita cuántos se pueden mandar por día */
+let REP=null;
+function openReport(name,ctx){
+  if(!sb||!ME){toast('Iniciá sesión para reportar jugadores');return}
+  REP={name:String(name||'').slice(0,12),ctx:String(ctx||'')};
+  $('#reptitle').textContent='Reportar a '+REP.name;
+  $('#repmsg').textContent='';$('#rep').hidden=false;
+}
+$('#rep').addEventListener('click',async e=>{
+  const b=e.target.closest('button[data-r]');if(!b||!REP)return;
+  const all=$('#rep').querySelectorAll('button[data-r]');all.forEach(x=>x.disabled=true);
+  try{
+    const r=await sb.rpc('report_player',{p_name:REP.name,p_reason:b.dataset.r,p_context:REP.ctx});
+    if(r.error)throw r.error;
+    $('#rep').hidden=true;REP=null;toast('Reporte enviado. Gracias');
+  }catch(x){
+    const m=String(x&&x.message||'');
+    $('#repmsg').textContent=m.includes('limit')?'Llegaste al límite de reportes de hoy.':m.includes('self')?'No podés reportarte a vos mismo.':'No se pudo enviar. Probá de nuevo.';
+  }finally{all.forEach(x=>x.disabled=false)}
+});
+$('#repcancel').onclick=()=>{$('#rep').hidden=true;REP=null};
+$('#rbox').addEventListener('click',e=>{const b=e.target.closest('[data-rep]');if(b)openReport(b.dataset.rep,'ranking')});
 function rkCard(pos,r,mine){
   const m=r.m||{},medal=pos<=3?' p'+pos:'';
   return '<div class="rcard'+(mine?' mine':'')+'"><div class="rhead"><span class="pos'+medal+'">'+pos+'</span>'
     +'<span class="nm">'+rkEsc(r.name||'Jugador')+'<small>Nivel '+rkEsc(r.level)+'</small></span>'
     +'<span class="xp">'+rkEsc(r.xp)+'<small>XP</small></span></div>'
     +'<div class="rstats">'+rkCell(r.gp,'Goles penales')+rkCell(r.gf,'Goles tiros libres')+rkCell(m.liga,'Copas')
-    +rkCell(m.clubs,'Pts clubes')+rkCell(m.stats,'Pts datos')+rkCell(m.quotes,'Pts frases')+'</div></div>';
+    +rkCell(m.clubs,'Pts clubes')+rkCell(m.stats,'Pts datos')+rkCell(m.quotes,'Pts frases')+'</div>'
+    +((mine||!r.name)?'':'<button class="rrep" type="button" data-rep="'+rkEsc(r.name)+'">Reportar</button>')+'</div>';
 }
 async function loadRank(){
   const box=$('#rbox'),tok=++rkTok;
