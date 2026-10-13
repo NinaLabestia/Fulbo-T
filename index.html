@@ -2298,6 +2298,8 @@ const K3D=(()=>{
   const st={ready:false,failed:false,loading:false};
   let renderer,scene,cam,model,mixer,spine,sig='',cur=null,prev=null,blend=1,lastNow=0,feetX=0,feetY=0,bodyPx=1;
   const acts={},durs={},parts=[];
+  /* para probar: con ?debug3d al final de la dirección, el estado del 3D queda escrito arriba de la pantalla */
+  function dbg(m){try{if(!/debug3d/.test(location.search))return;let d=document.getElementById('k3dDbg');if(!d){d=document.createElement('div');d.id='k3dDbg';d.style.cssText='position:fixed;left:6px;right:6px;top:6px;z-index:99999;background:#000c;color:#ffd24a;font:12px/1.3 Arial,sans-serif;padding:6px 8px;border-radius:6px;pointer-events:none;word-break:break-all';document.body.appendChild(d)}d.textContent='3D: '+m}catch(_){}}
   const loadScript=u=>new Promise((ok,no)=>{const s=document.createElement('script');s.src=u;s.onload=ok;s.onerror=()=>no(new Error('no cargó '+u));document.head.appendChild(s)});
   const pickClip=o=>{const cl=((o&&o.animations)||[]).filter(a=>a.tracks&&a.tracks.length);return cl.find(a=>/mixamo/i.test(a.name))||cl[0]};
   /* sin desplazamiento: el juego mueve al jugador, el modelo se queda en el lugar */
@@ -2404,17 +2406,25 @@ const K3D=(()=>{
   }
   async function init(){
     if(st.loading||st.ready||st.failed)return;
-    st.loading=true;
+    st.loading=true;dbg('cargando…');
     try{
       if(!window.THREE)await loadScript(CDN+'build/three.min.js');
-      if(!window.fflate)await loadScript(CDN+'examples/js/libs/fflate.min.js');
+      /* el lector de FBX usa fflate (o inflate en versiones viejas): se cargan los dos y si uno no existe no pasa nada */
+      if(!window.fflate)await loadScript(CDN+'examples/js/libs/fflate.min.js').catch(()=>null);
+      if(!window.Zlib)await loadScript(CDN+'examples/js/libs/inflate.min.js').catch(()=>null);
       if(!THREE.FBXLoader)await loadScript(CDN+'examples/js/loaders/FBXLoader.js');
       const ld=new THREE.FBXLoader();
       const load=f=>new Promise((ok,no)=>ld.load(BASE+f,ok,undefined,no));
       const r=await Promise.all([load(FILES.idle),load(FILES.run),load(FILES.kick),load(FILES.win)]);
       build(r[0],{run:r[1],kick:r[2],win:r[3]});
-      st.ready=true;
-    }catch(e){st.failed=true;console.warn('Jugador 3D no disponible, se usa el dibujo 2D:',e)}
+      st.ready=true;dbg('listo');
+    }catch(e){
+      st.failed=true;
+      const why=String((e&&(e.message||(e.target&&e.target.src)))||e);
+      st.why=why;
+      console.warn('Jugador 3D no disponible, se usa el dibujo 2D: '+why,e);
+      dbg('no disponible → '+why);
+    }
     st.loading=false;
   }
   /* qué animación y en qué segundo, según la fase del tiro (el tiempo lo manda el juego, así queda sincronizado con la pelota) */
@@ -2469,7 +2479,12 @@ const K3D=(()=>{
         c.restore();
       }
       return true;
-    }catch(e){st.failed=true;st.ready=false;console.warn('Jugador 3D falló, vuelve el dibujo 2D:',e);return false}
+    }catch(e){
+      st.failed=true;st.ready=false;st.why=String((e&&e.message)||e);
+      console.warn('Jugador 3D falló, vuelve el dibujo 2D: '+st.why,e);
+      dbg('falló al dibujar → '+st.why);
+      return false;
+    }
   }
   return{draw,init,st,CONTACT};
 })();
