@@ -2315,6 +2315,18 @@ const K3D=(()=>{
     if(nm.includes('foot')||nm.includes('toe'))return 4;
     return 0;
   }
+  /* altura real del modelo medida sobre sus vértices (con el esqueleto en su pose inicial) */
+  function measure(){
+    model.updateMatrixWorld(true);
+    const v=new THREE.Vector3();let lo=Infinity,hi=-Infinity;
+    model.traverse(o=>{
+      if(!o.isSkinnedMesh)return;
+      o.skeleton.update();
+      const pos=o.geometry.attributes.position;
+      for(let i=0;i<pos.count;i++){v.fromBufferAttribute(pos,i);o.boneTransform(i,v);v.applyMatrix4(o.matrixWorld);if(v.y<lo)lo=v.y;if(v.y>hi)hi=v.y}
+    });
+    return hi-lo;
+  }
   function classify(){
     model.updateMatrixWorld(true);
     const v=new THREE.Vector3(),bones={};
@@ -2344,7 +2356,7 @@ const K3D=(()=>{
       }
       const col=new THREE.BufferAttribute(new Float32Array(n*3),3);
       g.setAttribute('color',col);
-      o.material=new THREE.MeshStandardMaterial({vertexColors:true,roughness:.8,metalness:0,skinning:true});
+      o.material=new THREE.MeshLambertMaterial({vertexColors:true,skinning:true,side:THREE.DoubleSide});
       parts.push({zone,wx,wy,col});
     });
   }
@@ -2381,6 +2393,7 @@ const K3D=(()=>{
     renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,preserveDrawingBuffer:true});
     renderer.setPixelRatio(1);renderer.setSize(CW,CH,false);renderer.setClearColor(0x000000,0);
     st.canvas=renderer.domElement;
+    if(/debug3d/.test(location.search)){st.canvas.style.cssText='position:fixed;left:6px;bottom:6px;width:160px;height:200px;z-index:99998;background:#f0f;border-radius:6px;pointer-events:none';document.body.appendChild(st.canvas)}
     scene=new THREE.Scene();
     scene.add(new THREE.HemisphereLight(0xffffff,0x6b7280,1.1));
     const dl=new THREE.DirectionalLight(0xffffff,.9);dl.position.set(-2,4,5);scene.add(dl);
@@ -2389,10 +2402,13 @@ const K3D=(()=>{
     /* el modelo mide 1,8 m y mira hacia el arco (de espaldas a la cámara) */
     model.rotation.y=Math.PI;
     model.updateMatrixWorld(true);
-    const bb=new THREE.Box3().setFromObject(model),h=bb.max.y-bb.min.y;
+    let h=measure();
+    if(!(h>0.01&&isFinite(h))){const bb=new THREE.Box3().setFromObject(model);h=bb.max.y-bb.min.y}
     model.scale.setScalar(h>0.01&&isFinite(h)?1.8/h:.01);
+    st.info={h:h,scale:model.scale.x};
     scene.add(model);
     classify();
+    st.info.h2=measure();
     spine=null;
     model.traverse(o=>{if(o.isBone){const n=o.name.toLowerCase();if(/spine1$/.test(n))spine=o;else if(!spine&&/spine2$/.test(n))spine=o}});
     mixer=new THREE.AnimationMixer(model);
@@ -2471,6 +2487,7 @@ const K3D=(()=>{
       paint(kit);
       setPose(want(),performance.now());
       renderer.render(scene,cam);
+      if((st.n=(st.n||0)+1)%30===1){const i=st.info||{},tri=renderer.info&&renderer.info.render?renderer.info.render.triangles:'?';dbg('listo · mallas '+parts.length+' · alto original '+(+i.h).toFixed(1)+' · alto final '+(+i.h2).toFixed(2)+' m · escala '+(+i.scale).toFixed(4)+' · triángulos '+tri+' · fase '+G.phase)}
       const s=ks.s,k=H2D*s/bodyPx,dx=ks.x-feetX*k,dy=ks.y-feetY*k;
       c.fillStyle='rgba(0,0,0,.34)';c.beginPath();c.ellipse(ks.x+2*s,ks.y+1.5*s,28*s,5.8*s,0,0,7);c.fill();
       c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';
