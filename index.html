@@ -2327,14 +2327,14 @@ const K3D=(()=>{
     model.traverse(o=>{
       if(!o.isSkinnedMesh)return;
       o.frustumCulled=false;
-      const g=o.geometry,pos=g.attributes.position,si=g.attributes.skinIndex,sw=g.attributes.skinWeight,n=pos.count,bn=o.skeleton.bones;
+      const g=o.geometry,pos=g.attributes.position,si=g.attributes.skinIndex.array,sw=g.attributes.skinWeight.array,n=pos.count,bn=o.skeleton.bones;
       const joint=/joint/i.test(o.name),zone=new Uint8Array(n),wx=new Float32Array(n),wy=new Float32Array(n),wz=new Float32Array(n);
       o.skeleton.update();
       for(let i=0;i<n;i++){
         v.fromBufferAttribute(pos,i);o.boneTransform(i,v);v.applyMatrix4(o.matrixWorld);
         wx[i]=v.x;wy[i]=v.y;wz[i]=v.z;
         let bi=0,bw=-1;
-        for(let j=0;j<4;j++){const w=sw.getComponent(i,j);if(w>bw){bw=w;bi=si.getComponent(i,j)}}
+        for(let j=0;j<4;j++){const w=sw[i*4+j];if(w>bw){bw=w;bi=si[i*4+j]}}
         zone[i]=zoneOf((bn[bi]?bn[bi].name:'').toLowerCase(),wy[i],ref,joint);
       }
       /* cabeza: arriba y atrás es pelo (la cámara ve al pateador de espaldas), el resto piel */
