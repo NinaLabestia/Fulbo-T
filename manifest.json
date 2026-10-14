@@ -7,7 +7,7 @@
   "start_url": "./index.html",
   "scope": "./",
   "display": "fullscreen",
-  "orientation": "portrait",
+  "orientation": "landscape",
   "background_color": "#0d2540",
   "theme_color": "#0d2540",
   "categories": ["games", "sports"],
