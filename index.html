@@ -4319,6 +4319,15 @@ function mBuildBG(){
   rg.addColorStop(0,'rgba(0,0,12,0)');rg.addColorStop(1,'rgba(0,0,12,.46)');v.fillStyle=rg;v.fillRect(0,0,FM.VW,FM.VH);
   mVig=vg;
 }
+/* ajuste a la pantalla: en celulares largos se ve más cancha hacia los costados en vez de dejar bordes negros */
+let mFitK='';
+function mFit(){
+  const k=innerWidth+'x'+innerHeight;if(k===mFitK)return;mFitK=k;
+  const vw=clamp(Math.round(FM.VH*innerWidth/innerHeight/2)*2,640,900);
+  FM.VW=vw;mcv.width=vw*2;mcv.height=FM.VH*2;
+  const st=$('#mStage');st.style.aspectRatio=vw+' / '+FM.VH;st.style.width=Math.floor(Math.min(innerWidth,innerHeight*vw/FM.VH))+'px';
+  mBGk='';if(M)mBuildBG();
+}
 const MSPR={k:.95,w:130,h:142,ox:60,oy:132};
 function sideBoot(c,x,y,ang,kit,far){
   c.save();c.translate(x,y);c.rotate(ang);
@@ -4583,6 +4592,7 @@ function mDrawGoal(c,side,m){
   c.fillStyle='rgba(0,0,0,.3)';c.beginPath();c.ellipse(gx,bot+1,5,1.8,0,0,7);c.fill();
 }
 function mDraw(){
+  mFit();
   const m=M,c=mcx,b=m.ball,TOP=FM.TOP,st=byId('stadium',S.eq.stadium),bg=mBG;
   c.setTransform(2,0,0,2,0,0);
   c.fillStyle=st.sky[0];c.fillRect(0,0,FM.VW,FM.VH);
