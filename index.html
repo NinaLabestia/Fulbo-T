@@ -405,6 +405,170 @@ html{background:#0d2540}
 @media (orientation:portrait){#mRot{display:block}}
 @media (orientation:landscape) and (max-height:480px){.mbox{gap:5px}.msub{font-size:11px}.mbox h2{font-size:20px}}
 </style>
+<style id="landscape-ui">
+/* ===== Fulbo Trivial · UI horizontal (igual a la maqueta) ===== */
+:root{--u:min(1vh,.55vw);--hh:calc(var(--u)*13);--rw:calc(var(--u)*17)}
+body{background:radial-gradient(120% 90% at 70% 0,#1d4f86 0,#0a1d33 55%,#06121f 100%) fixed}
+.screen:not(#home):not(#match):not(#play):not(#trivia){max-width:1100px;margin-inline:auto;width:100%}
+.stage{width:fit-content;max-width:100%;margin-inline:auto}
+.stage canvas{height:calc(100dvh - 110px);width:auto;aspect-ratio:4/5;max-width:100%}
+.hstage .fhint{display:none}
+@media (orientation:landscape){
+ body{padding-block:0 12px;padding-left:max(0px,env(safe-area-inset-left,0px));padding-right:max(0px,env(safe-area-inset-right,0px))}
+ .wrap{max-width:none;display:grid;grid-template-columns:var(--rw) auto 1fr auto auto;grid-template-rows:var(--hh) auto;column-gap:calc(var(--u)*3);row-gap:0;align-items:center;padding-right:calc(var(--u)*3)}
+ .top,.top-r{display:contents}
+ .brand{grid-column:2;grid-row:1;font-size:calc(var(--u)*6.5);white-space:nowrap}
+ .lvl{grid-column:3;grid-row:1;justify-self:center;width:min(100%,46vw);gap:calc(var(--u)*2);font-size:calc(var(--u)*3)}
+ .lvl b{font-size:calc(var(--u)*4)}
+ .bar{height:calc(var(--u)*2)}
+ #snd{grid-column:4;grid-row:1;padding:calc(var(--u)*1) calc(var(--u)*2.4);font-size:calc(var(--u)*2.8)}
+ .coins{grid-column:5;grid-row:1;font-size:calc(var(--u)*5);padding:calc(var(--u)*.8) calc(var(--u)*3) calc(var(--u)*.8) calc(var(--u)*1)}
+ .coin{width:calc(var(--u)*4);height:calc(var(--u)*4)}
+ .wrap>.screen{grid-column:2/-1;grid-row:2}
+ .wrap>#match{grid-column:1/-1}
+ /* menú lateral */
+ .tabnav{top:calc(var(--hh) + env(safe-area-inset-top,0px));bottom:0;right:auto;left:0;width:calc(var(--rw) + env(safe-area-inset-left,0px));height:auto;flex-direction:column;justify-content:flex-start;gap:calc(var(--u)*1.4);padding:calc(var(--u)*1.5) calc(var(--u)*1.5) calc(var(--u)*3) calc(var(--u)*3 + env(safe-area-inset-left,0px));background:transparent;border:0}
+ .tabnav button{flex:1;max-height:calc(var(--u)*19);width:100%;display:grid;place-items:center;align-content:center;gap:calc(var(--u)*.8);border-radius:calc(var(--u)*2);border:2px solid transparent;font-size:calc(var(--u)*2.6);letter-spacing:.1em;padding:0;position:relative}
+ .tabnav button svg{width:calc(var(--u)*6);height:calc(var(--u)*6)}
+ .tabnav button.on{background:rgba(255,200,61,.1);border-color:var(--sun);color:var(--sun)}
+ .tabnav button:not(.on):hover{background:rgba(116,172,223,.12);color:var(--fg)}
+ .tabnav .dot{top:8%;right:14%;font-size:calc(var(--u)*2.4);line-height:1;padding:calc(var(--u)*.6) calc(var(--u)*1.2);min-width:0;height:auto;box-shadow:none}
+ /* inicio */
+ #home{display:grid;grid-template-columns:calc(var(--u)*50) 1fr;gap:calc(var(--u)*3);align-items:stretch;height:calc(100dvh - var(--hh) - 12px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));min-height:0}
+ #home>.me{display:flex;flex-direction:column;gap:calc(var(--u)*1.6);background:linear-gradient(170deg,#1b4673,#12304f);border:2px solid var(--line);border-radius:calc(var(--u)*2.4);padding:calc(var(--u)*2.4);min-height:0}
+ #home .me .av{flex:1;min-height:0;display:grid;place-items:center;border-radius:calc(var(--u)*1.8);overflow:hidden;background:var(--bg2)}
+ #home .me .av canvas{height:100%;width:auto;max-width:100%;aspect-ratio:240/260;border-radius:0}
+ #home .me h2{font-size:calc(var(--u)*8);line-height:1}
+ #home .me p{font-size:calc(var(--u)*3);margin:0}
+ #home .me .row2{gap:calc(var(--u)*1.2)}
+ #home .me .ghost{font-size:calc(var(--u)*2.8);padding:calc(var(--u)*1) calc(var(--u)*2.4)}
+ .hstage{display:flex;flex-direction:column;gap:calc(var(--u)*2);min-width:0;min-height:0}
+ .ftabs{display:flex;align-items:center;gap:calc(var(--u)*1.4)}
+ .ftabs .sec{font-size:calc(var(--u)*5);line-height:1}.ftabs .sp{flex:1}
+ .ftab{border:2px solid var(--line);border-radius:99px;padding:calc(var(--u)*1) calc(var(--u)*3);font:700 calc(var(--u)*3)/1 var(--label);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--bg2)}
+ .ftab.on{background:var(--celeste);border-color:var(--celeste);color:var(--ink)}
+ .hstage .fhint{display:block;font:700 calc(var(--u)*2.6)/1 var(--label);letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+ .modes{flex:1;min-height:0;display:flex;gap:calc(var(--u)*2);overflow-x:auto;scroll-snap-type:x proximity;padding:calc(var(--u)*1) calc(var(--u)*1) calc(var(--u)*2) 0;scrollbar-width:none;grid-template-columns:none}
+ .modes::-webkit-scrollbar{display:none}
+ .mode{flex:none;width:calc(var(--u)*30);scroll-snap-align:start;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;gap:calc(var(--u)*.6);text-align:left;padding:calc(var(--u)*2.4);border:2px solid var(--line);border-radius:calc(var(--u)*2.4);background:linear-gradient(165deg,var(--c1),var(--c2));transition:transform .18s,border-color .18s;min-width:0}
+ .mode.hero{width:calc(var(--u)*58)}
+ .mode:hover,.mode:focus-visible{transform:translateY(calc(var(--u)*-1.2));border-color:var(--sun);background:linear-gradient(165deg,var(--c1),var(--c2));outline:0}
+ .mode::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(6,18,31,.78) 0,transparent 62%);pointer-events:none}
+ .mode>*{position:relative;z-index:1}
+ .mode svg{position:absolute;right:calc(var(--u)*-3);top:calc(var(--u)*-1);width:calc(var(--u)*30);height:calc(var(--u)*30);opacity:.22;color:#fff;grid-column:auto}
+ .mode.hero svg{width:calc(var(--u)*50);height:calc(var(--u)*50)}
+ .mode .tag{position:absolute;top:calc(var(--u)*2.2);left:calc(var(--u)*2.4);font:700 calc(var(--u)*2.4)/1 var(--label);letter-spacing:.12em;text-transform:uppercase;background:rgba(6,18,31,.55);border-radius:99px;padding:calc(var(--u)*.8) calc(var(--u)*1.6)}
+ .mode h3{font-size:calc(var(--u)*6.2);line-height:1;letter-spacing:.03em}
+ .mode.hero h3{font-size:calc(var(--u)*10)}
+ .mode p{font-size:calc(var(--u)*2.8);color:#d3e3f4;line-height:1.25}
+ .mode em{font-size:calc(var(--u)*3);text-align:left}
+ .mode .go{margin-top:calc(var(--u)*1);background:var(--sun);color:var(--ink);border-radius:calc(var(--u)*1.2);padding:calc(var(--u)*1.8) calc(var(--u)*5);font:700 calc(var(--u)*4)/1 var(--label);letter-spacing:.1em;text-transform:uppercase;box-shadow:0 3px 0 #b88a10}
+ .stage canvas{height:calc(100dvh - 96px)}
+}
+@media (orientation:portrait){body::before{content:"Girá el celular en horizontal";position:fixed;inset:0;z-index:99990;display:grid;place-items:center;background:#0d2540;font:28px var(--display);letter-spacing:.05em;text-transform:uppercase;color:var(--sun);text-align:center;padding:20px}}
+@media (prefers-reduced-motion:reduce){.mode{transition:none}}
+</style>
+<style id="landscape-play">
+@media (orientation:landscape){
+ /* pantallas sin menú lateral usan todo el ancho */
+ .wrap>#play,.wrap>#trivia,.wrap>#liga,.wrap>#fulbo,.wrap>#lan,.wrap>#result{grid-column:1/-1;padding-left:calc(max(14px,env(safe-area-inset-left,0px)) + var(--u)*2);max-width:none;width:auto;margin:0}
+ .wrap>#liga,.wrap>#fulbo,.wrap>#lan,.wrap>#result{max-width:760px;margin-inline:auto;width:100%}
+ .plist{grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr))}
+ .rk{grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));align-items:start}
+ /* ---- penales / tiros libres / arquero: cancha ancha a pantalla completa ---- */
+ body[data-scr="play"],body[data-scr="trivia"],body[data-scr="liga"],body[data-scr="fulbo"],body[data-scr="lan"],body[data-scr="result"],body[data-scr="match"]{padding-block:0}
+ body[data-scr="play"] .top,body[data-scr="play"] .lvl,body[data-scr="trivia"] .top,body[data-scr="trivia"] .lvl,body[data-scr="liga"] .top,body[data-scr="liga"] .lvl,body[data-scr="fulbo"] .top,body[data-scr="fulbo"] .lvl,body[data-scr="lan"] .top,body[data-scr="lan"] .lvl,body[data-scr="result"] .top,body[data-scr="result"] .lvl{display:none}
+ body[data-scr="play"] .wrap,body[data-scr="trivia"] .wrap,body[data-scr="liga"] .wrap,body[data-scr="fulbo"] .wrap,body[data-scr="lan"] .wrap,body[data-scr="result"] .wrap{grid-template-rows:0 auto}
+ body[data-scr="play"],body[data-scr="trivia"]{overflow:hidden;height:100dvh}
+ #play{position:relative;display:block;height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));padding:0;margin:0;grid-column:1/-1;min-height:0}
+ .wrap>#play{padding-left:0;width:100%;max-width:none}
+ #play .stage{position:relative;height:100%;width:auto;max-width:100%;aspect-ratio:748/421;margin:0 auto;border:0;border-radius:0;background:#050d18}
+ #play .stage canvas{width:100%;height:100%;aspect-ratio:auto;max-width:none}
+ #play .bar-top{position:absolute;left:max(8px,env(safe-area-inset-left,0px));top:8px;z-index:6;display:block;pointer-events:none}
+ #play .bar-top .ghost{pointer-events:auto;background:rgba(8,14,26,.7);padding:3px 10px;font-size:calc(var(--u)*3)}
+ #play .hud{position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}
+ #play .hint:empty{display:none}
+ #play .hint{position:absolute;left:calc(max(8px,env(safe-area-inset-left,0px)) + var(--u)*1);bottom:calc(var(--u)*2);transform:none;z-index:5;background:rgba(8,14,26,.72);border:1px solid rgba(255,255,255,.2);border-radius:99px;padding:calc(var(--u)*1.2) calc(var(--u)*3.5);font-size:calc(var(--u)*3);white-space:nowrap;pointer-events:none;max-width:34%;overflow:hidden;text-overflow:ellipsis;white-space:normal;border-radius:calc(var(--u)*2);line-height:1.2}
+ /* ---- trivias compactas: todo entra sin deslizar ---- */
+ #trivia{display:grid;grid-template-columns:1fr 1fr;gap:calc(var(--u)*1.6) calc(var(--u)*3);align-items:start;padding:calc(var(--u)*2) calc(var(--u)*2) calc(var(--u)*2) 0;height:100dvh;max-height:100dvh;align-content:start;overflow:hidden}
+ .wrap>#trivia{padding-left:max(14px,env(safe-area-inset-left,0px))}
+ #trivia>.bar-top,#trivia>.dots{grid-column:1/-1}
+ #trivia>.bar-top .ghost{padding:calc(var(--u)*.8) calc(var(--u)*2.4);font-size:calc(var(--u)*2.8)}
+ #trivia .pill{font-size:calc(var(--u)*2.8);padding:1px calc(var(--u)*2.4)}#trivia .pill b{font-size:calc(var(--u)*3.8)}
+ #trivia .dots i{height:calc(var(--u)*1.6)}
+ #trivia>.card{grid-column:1;padding:calc(var(--u)*2.4);gap:calc(var(--u)*1.6);align-self:stretch;overflow:auto}
+ #trivia .qlabel{font-size:calc(var(--u)*3)}
+ #trivia blockquote{font-size:calc(var(--u)*4.6);line-height:1.15}
+ #trivia .chip{font-size:calc(var(--u)*4);padding:2px calc(var(--u)*2)}
+ #trivia .clue{padding:calc(var(--u)*1.2) calc(var(--u)*2);font-size:calc(var(--u)*3.2)}
+ #trivia .card .btn{padding:calc(var(--u)*1.2) calc(var(--u)*3);font-size:calc(var(--u)*3.2)}
+ #trivia>.opts{grid-column:2;grid-template-columns:1fr;gap:calc(var(--u)*1.4)}
+ #trivia .opt{font-size:calc(var(--u)*3.4);padding:calc(var(--u)*1.8) calc(var(--u)*2.6)}
+ #trivia>.fb{position:fixed;z-index:15;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:max(8px,env(safe-area-inset-bottom,0px));grid-template-columns:1fr auto;grid-template-rows:auto auto;column-gap:calc(var(--u)*3);align-items:center;padding:calc(var(--u)*2) calc(var(--u)*3);box-shadow:0 -6px 24px rgba(0,0,0,.5);background:#12304f}
+ #trivia>.fb h3{grid-column:1;font-size:calc(var(--u)*5)}
+ #trivia>.fb p{grid-column:1;font-size:calc(var(--u)*3)}
+ #trivia>.fb>div{grid-column:2;grid-row:1/span 2}
+ #trivia>.fb .btn{font-size:calc(var(--u)*4);padding:calc(var(--u)*2) calc(var(--u)*5)}
+}
+</style>
+<style id="landscape-fulbo">
+@media (orientation:landscape){
+ body[data-scr="fulbo"],body[data-scr="liga"],body[data-scr="lan"],body[data-scr="result"]{overflow:hidden;height:100dvh}
+ .wrap>#fulbo,.wrap>#liga,.wrap>#lan,.wrap>#result{max-width:1000px;padding:calc(var(--u)*1.6) max(14px,env(safe-area-inset-left,0px)) calc(var(--u)*1.6) max(14px,env(safe-area-inset-right,0px));height:100dvh;overflow:hidden;align-content:start;margin-inline:auto}
+ #fulbo .card.lg,#liga .card.lg,#lan .card.lg,#result .card.res{padding:calc(var(--u)*2) calc(var(--u)*2.6);gap:calc(var(--u)*1.4);max-height:calc(100dvh - var(--u)*3.2);overflow:auto}
+ .lgh{font-size:calc(var(--u)*6.4);line-height:1}
+ .lgsub{font-size:calc(var(--u)*3);line-height:1.25}
+ .lgopt{padding:calc(var(--u)*1.8) calc(var(--u)*2.4);gap:2px}
+ .lgopt b{font-size:calc(var(--u)*4.8)} .lgopt span{font-size:calc(var(--u)*2.9);line-height:1.25}
+ .lgme{padding:calc(var(--u)*1) calc(var(--u)*2.4)}
+ .up-banner{font-size:calc(var(--u)*4.4);padding:calc(var(--u)*.8)}
+ #fulbo .btn,#liga .btn,#lan .btn,#result .btn{padding:calc(var(--u)*1.6) calc(var(--u)*4);font-size:calc(var(--u)*3.6)}
+ #fulbo .rows,#liga .rows,#result .rows{gap:calc(var(--u)*.8);font-size:calc(var(--u)*3.2)}
+ .fcup svg{height:calc(var(--u)*20);width:auto}.fcup.big svg{height:calc(var(--u)*34)}
+ .lgvs .vs{font-size:calc(var(--u)*8)}.lgt b{font-size:calc(var(--u)*4)}
+ .lgt .shd{--w:calc(var(--u)*11)!important}
+ #fulboBox .fbk .shd{--w:calc(var(--u)*5)!important}
+ .mlab{font-size:calc(var(--u)*2.8)}
+ .mseg button{padding:calc(var(--u)*1.2) 4px;font-size:calc(var(--u)*3.4)}
+ /* inicio de Liga Fulbo: tres opciones en fila */
+ #fulboBox[data-v="hub"]{display:grid;grid-template-columns:repeat(3,1fr);align-items:stretch}
+ #fulboBox[data-v="hub"]:has(#fbCont){grid-template-columns:repeat(4,1fr)}
+ #fulboBox[data-v="hub"]>.lgh,#fulboBox[data-v="hub"]>.lgsub,#fulboBox[data-v="hub"]>.rows,#fulboBox[data-v="hub"]>.actions{grid-column:1/-1}
+ #fulboBox[data-v="hub"] .rows{display:flex;justify-content:center;gap:calc(var(--u)*6)}
+ #fulboBox[data-v="hub"] .row{border:0;padding:0;gap:calc(var(--u)*2)}
+ #fulboBox[data-v="cfg"] .fcup{display:none}
+ /* campeonato: título + equipo + botón en una fila, cuadro debajo */
+ #fulboBox[data-v="bracket"],#fulboBox[data-v="final"]{display:grid;grid-template-columns:auto 1fr auto;align-items:center;column-gap:calc(var(--u)*3);row-gap:calc(var(--u)*1.2)}
+ #fulboBox[data-v="bracket"]>.lgh,#fulboBox[data-v="final"]>.lgh{grid-column:1;grid-row:1;text-align:left}
+ #fulboBox[data-v="bracket"]>.lgme{grid-column:2;grid-row:1;justify-self:center}
+ #fulboBox[data-v="bracket"]>.actions,#fulboBox[data-v="final"]>.actions{grid-column:3;grid-row:1;flex-wrap:nowrap}
+ #fulboBox[data-v="bracket"]>.up-banner{grid-column:1/-1;grid-row:2}
+ #fulboBox[data-v="bracket"]>.lgsub{display:none}
+ #fulboBox .fbk{grid-column:1/-1;grid-row:3;max-height:calc(100dvh - var(--u)*22);overflow:auto;scroll-snap-type:x proximity;padding-bottom:calc(var(--u)*1)}
+ #fulboBox .fcol{flex:0 0 auto;width:calc(var(--u)*46);max-width:none;gap:calc(var(--u)*1)}
+ #fulboBox .fcol[data-r="0"],#fulboBox .fcol[data-r="1"]{display:block;width:calc(var(--u)*92);column-count:2;column-gap:calc(var(--u)*1.6)}
+ #fulboBox .fcol h4,#fulboBox .fcol h5{column-span:all;margin-bottom:calc(var(--u)*.8)}
+ #fulboBox .fcol .fm{break-inside:avoid;margin-bottom:calc(var(--u)*1)}
+ #fulboBox .fcol .fchips{column-span:all;gap:calc(var(--u)*.6)}
+ #fulboBox .fcol h5{margin:calc(var(--u)*.4) 0 calc(var(--u)*.6)}
+ #fulboBox .fchip{font-size:calc(var(--u)*2.6);padding:0 calc(var(--u)*1.6) 0 calc(var(--u)*1.2)}
+ #fulboBox .fcol h4{font-size:calc(var(--u)*3.2)}
+ #fulboBox .ft{padding:calc(var(--u)*.3) calc(var(--u)*1.8);gap:calc(var(--u)*1.4)}
+ #fulboBox .ft b{font-size:calc(var(--u)*3)} #fulboBox .ft i{font-size:calc(var(--u)*3.8)}
+}
+</style>
+<style id="landscape-intro">
+@media (orientation:landscape){
+ #intro .ibox{display:grid;grid-template-columns:auto auto;column-gap:5vh;row-gap:0;align-items:center;justify-items:start;margin-top:-6vh}
+ #intro .iball{width:min(36vh,22vw);margin:0}
+ #intro h1{align-items:flex-start}
+ #intro .i1{font-size:clamp(34px,25vh,120px)}
+ #intro .i2{font-size:clamp(26px,18vh,92px)}
+ #intro .iline{grid-column:1/-1;justify-self:center;margin-top:3vh;margin-bottom:0}
+ #intro .ibar{bottom:9%}
+ #intro .itap{bottom:3.5%}
+}
+</style>
 </head>
 <body>
 <div id="intro" aria-hidden="true">
@@ -438,17 +602,16 @@ html{background:#0d2540}
   <section id="home" class="screen">
     <div class="me">
       <div class="av"><canvas id="meCv" width="240" height="260"></canvas></div>
-      <div>
-        <h2 id="meName">Tu jugador</h2>
-        <p id="meInfo"></p>
-        <div class="row2"><button class="ghost" id="chName">Cambiar nombre</button><button class="ghost" id="accBtn" type="button">Ingresar</button></div>
-      </div>
+      <div class="mi"><h2 id="meName">Tu jugador</h2><p id="meInfo"></p></div>
+      <div class="row2"><button class="ghost" id="chName">Cambiar nombre</button><button class="ghost" id="accBtn" type="button">Ingresar</button></div>
     </div>
-    <div class="quick"><button class="btn gold qb" data-go="pass" id="passBtn">PASE ELITE</button><button class="btn qb" data-go="rank" id="rankBtn">RANKING</button></div>
-    <div class="quick" style="grid-template-columns:1fr"><button class="btn qb" data-go="friends" id="friBtn" type="button" style="position:relative">AMIGOS</button></div>
-    <h2 class="sec">Jugar</h2>
-    <button class="feat" id="featPen" type="button"></button>
-    <div class="modes" id="modesA"></div>
+    <div class="hstage">
+      <div class="ftabs" role="tablist"><h2 class="sec">Jugar</h2><span class="sp"></span>
+        <button class="ftab on" data-f="all" type="button">Todos</button><button class="ftab" data-f="arc" type="button">Arcade</button><button class="ftab" data-f="onl" type="button">Online</button><button class="ftab" data-f="tri" type="button">Trivia</button></div>
+      <div class="modes" id="modesA"></div>
+      <div class="fhint">Deslizá para ver más modos ›</div>
+    </div>
+    <button id="featPen" type="button" hidden></button>
   </section>
 
   <section id="play" class="screen" hidden>
@@ -528,7 +691,7 @@ html{background:#0d2540}
     <div id="mBtns"><button class="mb" id="bShoot" type="button">Tiro</button><button class="mb" id="bPass" type="button">Pase</button><button class="mb" id="bTack" type="button">Robar</button><button class="mb" id="bRun" type="button">Correr</button></div>
   </section>
 </div>
-<nav class="tabnav" id="nav" hidden><button type="button" data-go="home"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8v9H3z"/></svg>Inicio</button><button type="button" data-go="rank"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-7"/></svg>Ranking</button><button type="button" data-go="pass"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>Pase</button><button type="button" data-go="shop"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6zM9 8a3 3 0 016 0"/></svg>Tienda</button></nav>
+<nav class="tabnav" id="nav" hidden aria-label="Menú"><button type="button" data-go="home"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8v9H3z"/></svg>Inicio</button><button type="button" data-go="rank"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 20V10M12 20V4M18 20v-7"/></svg>Ranking</button><button type="button" data-go="pass" id="passNav"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/></svg>Pase</button><button type="button" data-go="shop"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6zM9 8a3 3 0 016 0"/></svg>Tienda</button><button type="button" data-go="friends" id="friBtn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6M16 14.5c3 0 5 2 5 5"/></svg>Amigos</button></nav>
 <div class="welcome" id="dlg" hidden><div class="wbox"><h2 id="dlgT"></h2><p id="dlgM"></p><div class="wact"><button class="btn gold" id="dlgY" type="button"></button><button class="btn alt" id="dlgN" type="button"></button></div><button class="ghost" id="dlgC" type="button" hidden>Seguir jugando</button></div></div>
 <div class="invbar" id="invbar" hidden role="alert"><span id="invTxt"></span><button class="btn" id="invYes" type="button">Aceptar</button><button class="btn alt" id="invNo" type="button">Denegar</button></div>
 <div class="toast" id="toast" role="status"></div>
@@ -1909,6 +2072,12 @@ function drawStadium(c,st,g,time,cheer){
     o=document.createElement('canvas');o.width=W*RS;o.height=H*RS;const x=o.getContext('2d');x.scale(RS,RS);paintStadium(x,st,g,fl);BGC[key]=o;
     o.net=document.createElement('canvas');o.net.width=W*RS;o.net.height=H*RS;const xn=o.net.getContext('2d');xn.scale(RS,RS);netBack(xn,g);
   }
+  if(c===cx){
+    const DY=214,s1=DY*RS,s2=(H-DY)*RS;
+    c.save();c.scale(-1,1);c.drawImage(o,0,0,W*RS,s1,0,0,W,DY);c.restore();
+    c.save();c.translate(2*W,0);c.scale(-1,1);c.drawImage(o,0,0,W*RS,s1,0,0,W,DY);c.restore();
+    c.drawImage(o,0,s1,3,s2,-W,DY,W,H-DY);c.drawImage(o,(W*RS)-3,s1,3,s2,W,DY,W,H-DY);
+  }
   c.drawImage(o,0,0,W,H);
   drawAds(c,g,time);
   c.drawImage(o.net,0,0,W,H);
@@ -1939,7 +2108,9 @@ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{for(const
 /* ---------- navegación ---------- */
 const GOALS={pen:{x:80,y:130,w:240,h:80,pen:true},fk:{x:115,y:152,w:170,h:58,pen:false}};
 let G=null,raf=0,last=0,R=null;
-const cv=$('#cv');cv.width=W*RS;cv.height=H*RS;const cx=cv.getContext('2d');cx.scale(RS,RS);
+/* vista ancha 16:9 de la cancha: recorte del mundo 400x500 + césped y tribuna espejados a los costados */
+const VW=748,VH=421,VX0=174,VY0=79;
+const cv=$('#cv');cv.width=VW*RS;cv.height=VH*RS;const cx=cv.getContext('2d');cx.scale(RS,RS);cx.translate(VX0,-VY0);
 const RUN=.4;let homeRaf=0;
 function show(id){
   if(id!=='play')stopGame();
@@ -1947,12 +2118,13 @@ function show(id){
   if(id!=='match')matchStop();
   if(id==='home')lanClose();
   document.querySelectorAll('.screen').forEach(s=>s.hidden=s.id!==id);
+  document.body.dataset.scr=id;
   if(id==='home')renderHome();
   if(id==='shop')renderShop(shopTab);
   if(id==='pass')renderPass();
   if(id==='rank')renderRank();
   if(id==='friends')renderFriends();
-  $('#nav').hidden=!['home','rank','pass','shop'].includes(id);document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.go===id));
+  $('#nav').hidden=!['home','rank','pass','shop','friends'].includes(id);document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.go===id));
   window.scrollTo(0,0);
   try{invShow()}catch(e){}
 }
@@ -1982,22 +2154,31 @@ const MODES=[
  {id:'stats',group:'B',name:'Por datos',desc:'Récords y hazañas, de menos a más pistas.'},
  {id:'quotes',group:'B',name:'Por frases',desc:'¿Quién dijo esta frase?'}
 ];
+let homeF='all';
+const TILE={pen:['arc','Arcade','#1f7a4d','#0d3a2b'],fk:['arc','Arcade','#c2791c','#5a2d0c'],liga:['onl','Online','#b8324a','#4a0f1c'],arq:['arc','Arcade','#7b3fc4','#2a1250'],lan:['onl','Online','#1b8da8','#0a3547'],clubs:['tri','Trivia','#35609a','#142946'],stats:['tri','Trivia','#2b7f6e','#0d3330'],quotes:['tri','Trivia','#9a5a2c','#3d200d']};
 function renderHome(){
   {
-    const box=$('#modesA');box.innerHTML='';
+    const box=$('#modesA');box.innerHTML='';box.scrollLeft=0;
+    const add=(k,tag,c1,c2,icon,name,desc,rec,fn,hero)=>{
+      if(homeF!=='all'&&homeF!==k)return;
+      const b=document.createElement('button');b.type='button';b.className='mode'+(hero&&homeF==='all'?' hero':'');
+      b.style.setProperty('--c1',c1);b.style.setProperty('--c2',c2);
+      b.innerHTML=icon+'<span class="tag">'+tag+'</span><h3>'+name+'</h3><p>'+desc+'</p><em>'+rec+'</em>'+(hero&&homeF==='all'?'<span class="go">Jugar</span>':'');
+      b.onclick=fn;box.appendChild(b);
+    };
+    add('onl','Online','#2467b3','#0f2d4d',ICON.liga,'Liga Fulbo','Campeonato de 20 clubes y partidos online.','Copa Fulbo '+(S.best.fulbo||0),fulboOpen,true);
     MODES.filter(m=>m.id!=='match').forEach(m=>{
-      const b=document.createElement('button');b.className='mode';
-      b.innerHTML=ICON[m.id]+'<h3>'+m.name+'</h3><p>'+m.desc+'</p><em>'+(m.id==='lan'?'2 jugadores':(m.id==='liga'?'Copa Liga ':'Récord ')+(S.best[m.id]||0))+'</em>';
-      b.onclick=()=>m.id==='arq'?arqStart():m.id==='lan'?lanOpen():m.id==='liga'?ligaOpen():m.group==='A'?playOrResume(m.id):startTrivia(m.id);
-      box.appendChild(b);
+      const t=TILE[m.id]||['arc','Arcade','#2467b3','#0f2d4d'];
+      add(t[0],t[1],t[2],t[3],ICON[m.id],m.name,m.desc,m.id==='lan'?'2 jugadores':(m.id==='liga'?'Copa Liga ':'Récord ')+(S.best[m.id]||0),
+        ()=>m.id==='arq'?arqStart():m.id==='lan'?lanOpen():m.id==='liga'?ligaOpen():m.group==='A'?playOrResume(m.id):startTrivia(m.id));
     });
+    document.querySelectorAll('.ftab').forEach(t=>{t.classList.toggle('on',t.dataset.f===homeF);t.onclick=()=>{homeF=t.dataset.f;renderHome()}});
   }
-  const ft=$('#featPen');ft.innerHTML='<h3>Liga Fulbo</h3><p>Campeonato de 20 clubes y partidos online.</p><div class="row"><span class="btn gold">Jugar</span><em>Copa Fulbo '+(S.best.fulbo||0)+'</em></div>';ft.onclick=fulboOpen;
   $('#meName').textContent=S.name||'Tu jugador';
   $('#meInfo').textContent='Nivel '+lvl()+' · '+S.goals+' goles en tu carrera';
   $('#chName').textContent=S.nameFree>0?'Cambiar nombre ('+S.nameFree+' gratis)':S.nameTokens>0?'Cambiar nombre ('+S.nameTokens+')':'Cambiar nombre';
   const nClaim=PASS.filter(r=>lvl()>=r.lv&&!S.pass.claimed.includes(r.lv)).length;
-  $('#passBtn').innerHTML='PASE ELITE'+(nClaim?'<span class="dot">'+nClaim+'</span>':'');
+  {const pn=$('#passNav');if(pn){const o=pn.querySelector('.dot');if(o)o.remove();if(nClaim)pn.insertAdjacentHTML('beforeend','<span class="dot">'+nClaim+'</span>')}}
   try{frBadge()}catch(e){}
   cancelAnimationFrame(homeRaf);homeRaf=requestAnimationFrame(homeAnim);
 }
@@ -2083,7 +2264,18 @@ function flash(t,cls){const m=$('#msg');m.textContent=t;m.className='msg '+cls;v
 function setHint(){
   if(!G)return;
   const h={hold:'Esperando que '+(NET?NET.opp:'tu rival')+' elija dónde tirarse…',aim:G.mode==='fk'?'Tocá para fijar la mira':'Tocá para patear',curve:'Tocá para dar efecto',choose:'¡Elegí hacia dónde tirarte! (tocá una opción)',shot:'',bounce:'',result:''};
-  $('#hint').textContent=(G.net&&G.phase==='aim'&&G.turn==='riv')?'Esperando que patee '+(NET?NET.opp:'tu rival')+'…':h[G.phase]||'';
+  const wait=G.net&&G.phase==='aim'&&G.turn==='riv';
+  const txt=wait?'Esperando que patee '+(NET?NET.opp:'tu rival')+'…':h[G.phase]||'';
+  /* la guía de cómo jugar sale solo 2 veces por ronda; los avisos de espera siempre */
+  let show=true;
+  if(txt&&!wait&&G.phase!=='hold'){
+    const rk=G.mode==='liga'?G.round:0;
+    if(G.hrk!==rk){G.hrk=rk;G.hn=0;G.hk=null}
+    const key=G.phase+'|'+G.kick+'|'+G.turn;
+    if(key!==G.hk){G.hk=key;if(G.hn<2){G.hn++;G.hon=true}else G.hon=false}
+    show=!!G.hon;
+  }
+  $('#hint').textContent=show?txt:'';
 }
 function hud(){
   {const pk=$('#hKick').parentNode.firstChild,pg=$('#hGoals').parentNode.firstChild;pk.nodeValue=G.arq?'Vidas':'Tiro';pg.nodeValue=G.arq?'Atajadas':'Goles'}
@@ -2358,7 +2550,32 @@ function draw(){
   if(G.phase==='aim'&&!(G.net&&G.turn==='riv')){const p=aimPos();reticle(c,p.x,p.y)}
   if(G.phase==='curve'){reticle(c,G.tx,G.ty,true);curveMeter(c)}
   drawParts(c,G.parts);
-  if(G.mode==='liga')ligaOverlay(c);
+  if(G.mode==='liga')ligaOverlay(c);else pHUD(c);
+}
+/* marcador estilo Liga Fulbo (bloques inclinados): cada bloque se ajusta al número que muestra */
+function pHUD(c){
+  const y0=VY0+8,h=36,k=8,gap=k-2,ids=['hKick','hGoals','hStreak','hScore'],minW=[78,66,66,76];
+  const LF='700 11px "Barlow Condensed",Arial Narrow,sans-serif',VF='400 20px Anton,Impact,sans-serif';
+  const it=ids.map((id,i)=>{
+    const el=$('#'+id),lab=(el.parentNode.firstChild.nodeValue||'').trim().toUpperCase(),val=String(el.textContent.replace(/♥+/,m=>m.length));
+    c.font=LF;const lw=c.measureText(lab).width;c.font=VF;const vw=c.measureText(val).width;
+    return{lab,val,w:Math.max(minW[i],Math.ceil(Math.max(lw,vw)+k*2+14))};
+  });
+  const tot=it.reduce((a,b)=>a+b.w,0)-gap*(it.length-1);let x=Math.round(200-tot/2);
+  c.save();c.textBaseline='alphabetic';
+  it.forEach((o,i)=>{
+    const light=i===it.length-1,w=o.w,cx0=x+w/2;
+    c.shadowColor='rgba(0,0,0,.55)';c.shadowBlur=9;c.shadowOffsetY=3;
+    mSlant(c,x,y0,w,h,k);
+    if(light)c.fillStyle='#eef2f8';else{const g=c.createLinearGradient(0,y0,0,y0+h);g.addColorStop(0,'#1d2a45');g.addColorStop(1,'#0a1020');c.fillStyle=g}
+    c.fill();c.shadowColor='transparent';
+    if(i===0){c.fillStyle='#ffc83d';c.fillRect(x+k-1,y0+h-2.5,w-k,2.5)}
+    c.textAlign='center';
+    c.font=LF;c.fillStyle=light?'#5d6b82':'#ffc83d';c.fillText(o.lab,cx0,y0+12);
+    c.font=VF;c.fillStyle=light?'#0c1424':'#ffffff';c.fillText(o.val,cx0,y0+h-8);
+    x+=w-gap;
+  });
+  c.restore();
 }
 function reticle(c,x,y,locked){
   const t=G?G.time:0,col=locked?'#ffc83d':'#7fe3ff',k=locked?1+.08*Math.sin(t*16):1+.05*Math.sin(t*4.5);
@@ -2405,7 +2622,7 @@ function curveMeter(c){
   c.restore();
 }
 cv.addEventListener('pointerdown',e=>{e.preventDefault();
-  if(G&&G.mode==='liga'&&G.phase==='choose'){const r=cv.getBoundingClientRect();ligaTap((e.clientX-r.left)/r.width*W,(e.clientY-r.top)/r.height*H);return}
+  if(G&&G.mode==='liga'&&G.phase==='choose'){const r=cv.getBoundingClientRect();ligaTap((e.clientX-r.left)/r.width*VW-VX0,(e.clientY-r.top)/r.height*VH+VY0);return}
   tap()});
 document.addEventListener('keydown',e=>{
   if(G&&G.mode==='liga'&&G.phase==='choose'&&!$('#play').hidden){const k={'1':0,'2':1,'3':2,'4':3,ArrowLeft:0,ArrowUp:1,ArrowRight:2}[e.key];if(k!==undefined){e.preventDefault();ligaPick(k)}return}
@@ -2844,7 +3061,8 @@ function ligaEndMatch(){
 /* marcador y zonas para elegir, dibujados encima del partido */
 function ligaOverlay(c){
   const sc=G.sc,n=Math.min(7,Math.max(3,G.round));
-  if(G.arq)arqBoard(c);else{
+  c.save();c.translate(0,VY0);
+  if(G.arq){c.save();c.translate(0,-VY0);pHUD(c);c.restore()}else{
   c.save();
   rr(c,70,4,260,41,8);c.fillStyle='rgba(8,14,26,.84)';c.fill();c.lineWidth=1.5;c.strokeStyle='rgba(255,255,255,.28)';c.stroke();
   ligaShieldC(c,80,8,20,24,S.eq.kit);ligaShieldC(c,300,8,20,24,G.rival);
@@ -2860,6 +3078,7 @@ function ligaOverlay(c){
     }
   }
   c.restore();}
+  c.restore();
   if(G.phase==='choose'){
     c.save();c.textAlign='center';
     G.opts.forEach((o,i)=>{
@@ -5426,6 +5645,7 @@ function fulboLeave(){
 function fulboView(v){
   show('fulbo');
   const b=$('#fulboBox'),me=S.eq.kit,go=(id,fn)=>{const e=$('#'+id);if(e)e.onclick=fn};
+  b.dataset.v=v;
   if(v==='hub'){
     const sv=S.sv.fulbo;
     b.innerHTML='<h2 class="lgh">Liga Fulbo</h2>'
@@ -5524,6 +5744,10 @@ try{if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0)windo
 function end(){if(done)return;done=true;el.classList.add('out');setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el)},700)}
 el.addEventListener('pointerdown',end);
 setTimeout(end,window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches?900:3400)})();
+</script>
+<script>
+/* intenta bloquear horizontal (funciona en app instalada / pantalla completa) */
+addEventListener('pointerdown',function(){try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}},{once:true});
 </script>
 </body>
 </html>
