@@ -755,6 +755,8 @@ const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(M
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const lerp=(a,b,t)=>a+(b-a)*t;
 const hash=(x,y)=>{const n=Math.sin(x*127.1+y*311.7)*43758.5453;return n-Math.floor(n)};
+/* ¿corre como app instalada/APK (ya en pantalla completa)? entonces no se entra ni se sale de pantalla completa desde el juego */
+function appMode(){try{return matchMedia('(display-mode: fullscreen)').matches||matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: minimal-ui)').matches}catch(e){return false}}
 const W=400,H=500;
 
 /* ---------- datos de la tienda ---------- */
@@ -5316,8 +5318,10 @@ function matchStop(){
   cancelAnimationFrame(mRaf);mRaf=0;MI2.x=MI2.y=0;MI2.shoot=MI2.up=MI2.pass=MI2.tack=MI2.run=false;
   if(M){crowdStop();M=null}
   MI.x=MI.y=0;MI.shoot=MI.up=MI.pass=MI.tack=MI.run=false;KV.x=KV.y=0;KV.l=KV.r=KV.u=KV.d=0;KV.run=false;
+  if(!appMode()){
   try{if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen()}catch(e){}
   try{if(screen.orientation&&screen.orientation.unlock)screen.orientation.unlock()}catch(e){}
+  }
 }
 function matchOpen(){
   matchStop();mSet.lfV='';
@@ -5350,7 +5354,7 @@ function mSetupUI(){
 function mStart(){
   if(!M||M.state!=='setup')return;
   $('#mSetup').hidden=true;$('#mPause').hidden=!!M.online;
-  try{const r=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(r&&r.then)r.then(()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}}).catch(()=>{})}catch(e){}
+  try{if(appMode())throw 0;const r=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(r&&r.then)r.then(()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}}).catch(()=>{})}catch(e){}
   M.state='kick';M.timer=1.5;
   crowdStart();setTimeout(()=>whistle(false),250);
 }
@@ -5432,7 +5436,7 @@ function netOnInit(m){
   if(k[0]&&k[1])M.kits=[Object.assign({},M.kits[0],k[1]),Object.assign({},M.kits[1],k[0])];
   M.oppName=String(m.hn||NET.opp||'Rival').slice(0,12);M.state='play';M.tg=null;M.snapT=0;M.inT=0;
   show('match');mBuildBG();$('#mSetup').hidden=true;$('#mPause').hidden=true;
-  try{const r=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(r&&r.then)r.then(()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}}).catch(()=>{})}catch(e){}
+  try{if(appMode())throw 0;const r=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(r&&r.then)r.then(()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}}).catch(()=>{})}catch(e){}
   crowdStart();setTimeout(()=>whistle(false),250);
   mLast=performance.now();mRaf=requestAnimationFrame(mGLoop);
   lanSend({t:'mready'});
