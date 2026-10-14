@@ -1,8 +1,18 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "io.github.ninalabestia.twa",
-        "sha256_cert_fingerprints": ["82:B9:08:4C:71:CF:86:4E:DE:2A:00:2A:C9:16:DA:D7:DB:4B:8E:E7:88:EC:A8:AD:4A:DB:88:1F:01:A6:FF:06"]
-      }
-    }]
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "io.github.ninalabestia.twa",
+      "sha256_cert_fingerprints": ["82:B9:08:4C:71:CF:86:4E:DE:2A:00:2A:C9:16:DA:D7:DB:4B:8E:E7:88:EC:A8:AD:4A:DB:88:1F:01:A6:FF:06"]
+    }
+  },
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.nina.thelatestinlarioja",
+      "sha256_cert_fingerprints": ["C6:D0:1A:13:18:FC:D6:93:2E:1B:F9:8C:87:22:CF:FC:B8:16:27:4E:0B:02:68:33:74:5E:FF:6F:94:32:9E:E6"]
+    }
+  }
+]
