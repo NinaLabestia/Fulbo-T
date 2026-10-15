@@ -569,6 +569,18 @@ body{background:radial-gradient(120% 90% at 70% 0,#1d4f86 0,#0a1d33 55%,#06121f 
  #intro .itap{bottom:3.5%}
 }
 </style>
+<style id="exit-btn">
+#exitApp{display:none}
+body[data-scr="home"] #exitApp{display:inline-block}
+@media (orientation:landscape){
+ .wrap{grid-template-columns:var(--rw) auto 1fr auto auto auto}
+ #exitApp{grid-column:5;grid-row:1;padding:calc(var(--u)*1) calc(var(--u)*2.4);font-size:calc(var(--u)*2.8);color:#ef8a8e;border-color:#7a2a30}
+ .coins{grid-column:6}
+ #snd{grid-column:4}
+ body:not([data-scr="home"]) .wrap{grid-template-columns:var(--rw) auto 1fr auto auto}
+ body:not([data-scr="home"]) .coins{grid-column:5}
+}
+</style>
 </head>
 <body>
 <div id="intro" aria-hidden="true">
@@ -594,6 +606,7 @@ body{background:radial-gradient(120% 90% at 70% 0,#1d4f86 0,#0a1d33 55%,#06121f 
     <div class="brand">FULBO<span>TRIVIAL</span></div>
     <div class="top-r">
       <button class="ghost" id="snd" aria-pressed="true">Sonido</button>
+      <button class="ghost" id="exitApp" type="button">Salir</button>
       <div class="coins" title="Tus monedas"><i class="coin"></i><b id="coins">0</b></div>
     </div>
   </header>
@@ -2201,6 +2214,12 @@ function homeAnim(now){
   homeRaf=requestAnimationFrame(homeAnim);
 }
 document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>show(b.dataset.go));
+$('#exitApp').onclick=()=>askDlg('¿Salir del juego?','Se va a cerrar Fulbo Trivial.','Salir','Cancelar',()=>{
+  try{save()}catch(e){}
+  try{window.close()}catch(e){}
+  /* si el sistema no deja cerrar la app desde adentro, se avisa cómo salir */
+  setTimeout(()=>{try{toast('Para salir, usá el gesto o botón Atrás de tu celular')}catch(e){}},500);
+},()=>{});
 $('#quit').onclick=quitPlay;
 $('#tquit').onclick=()=>show('home');
 $('#snd').onclick=()=>{S.mute=!S.mute;save();refreshTop();if(S.mute)crowdStop();else if(G)crowdStart()};
