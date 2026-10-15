@@ -670,7 +670,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 </script>
 <style id="play-fullscreen">
-/* ---- penales / tiros libres / liga penalitis / modo arquero: juego a pantalla completa + marcador compacto abajo a la izquierda ---- */
+/* ---- pantalla completa sin bordes + marcador compacto abajo a la izquierda ---- */
 @media (orientation:landscape){
  body[data-scr="play"]{background:#050d18}
  body[data-scr="play"] #play{position:fixed;inset:0;height:auto;width:auto;max-width:none;margin:0;padding:0;z-index:30;background:#050d18}
@@ -2187,9 +2187,20 @@ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{for(const
 const GOALS={pen:{x:80,y:130,w:240,h:80,pen:true},fk:{x:115,y:152,w:170,h:58,pen:false}};
 let G=null,raf=0,last=0,R=null;
 /* vista ancha 16:9 de la cancha: recorte del mundo 400x500 + césped y tribuna espejados a los costados */
-const VW=748,VH=421,VX0=174,VY0=79;
+let VW=748,VX0=174;const VH=421,VY0=79;
 const RSG=Math.min(RS,2);
 const cv=$('#cv');cv.width=VW*RSG;cv.height=VH*RSG;const cx=cv.getContext('2d',{alpha:false});cx.scale(RSG,RSG);cx.translate(VX0,-VY0);
+/* la vista se ensancha según la pantalla (el estadio ya se espeja a los costados): sin bordes, sin recortar tribunas y sin deformar */
+function fitView(){
+  const asp=Math.min(2.8,Math.max(748/421,innerWidth/Math.max(1,innerHeight)));
+  const nw=Math.round(VH*asp),nx=Math.round((nw-W)/2);
+  if(nw===VW&&nx===VX0)return;
+  VW=nw;VX0=nx;cv.width=VW*RSG;cv.height=VH*RSG;
+  cx.setTransform(1,0,0,1,0,0);cx.scale(RSG,RSG);cx.translate(VX0,-VY0);
+  for(const k in BGC)delete BGC[k].ext;
+}
+addEventListener('resize',fitView);addEventListener('orientationchange',()=>setTimeout(fitView,200));
+fitView();
 const RUN=.4;let homeRaf=0;
 function show(id){
   if(id!=='play')stopGame();
@@ -2378,6 +2389,7 @@ function hud(){
 }
 function startGame(mode,rs){
   show('play');
+  fitView();
   G={mode,goal:GOALS[mode],kick:0,total:5,score:0,goals:0,streak:0,coins:0,time:0,parts:[],trail:[],ph:rnd(0,6),cheer:0,rt:0};
   if(rs){G.kick=rs.kick;G.score=rs.score;G.goals=rs.goals;G.streak=rs.streak;G.coins=rs.coins}
   $('#msg').className='msg';
@@ -2721,7 +2733,7 @@ function curveMeter(c){
   c.restore();
 }
 cv.addEventListener('pointerdown',e=>{e.preventDefault();
-  if(G&&G.mode==='liga'&&G.phase==='choose'){const r=cv.getBoundingClientRect(),land=matchMedia('(orientation:landscape)').matches,k=land?Math.max(r.width/VW,r.height/VH):0;if(land){const ox=(r.width-VW*k)*.5,oy=(r.height-VH*k)*.7;ligaTap((e.clientX-r.left-ox)/k-VX0,(e.clientY-r.top-oy)/k+VY0)}else ligaTap((e.clientX-r.left)/r.width*VW-VX0,(e.clientY-r.top)/r.height*VH+VY0);return}
+  if(G&&G.mode==='liga'&&G.phase==='choose'){const r=cv.getBoundingClientRect(),k=Math.max(r.width/VW,r.height/VH),ox=(r.width-VW*k)*.5,oy=(r.height-VH*k)*.7;ligaTap((e.clientX-r.left-ox)/k-VX0,(e.clientY-r.top-oy)/k+VY0);return}
   tap()});
 document.addEventListener('keydown',e=>{
   if(G&&G.mode==='liga'&&G.phase==='choose'&&!$('#play').hidden){const k={'1':0,'2':1,'3':2,'4':3,ArrowLeft:0,ArrowUp:1,ArrowRight:2}[e.key];if(k!==undefined){e.preventDefault();ligaPick(k)}return}
